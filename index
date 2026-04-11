@@ -24,10 +24,15 @@
         
         .btn-choice.active { border-color: #3b82f6; background: #eff6ff; color: #1d4ed8; box-shadow: 0 6px 0 #93c5fd; }
         
+        /* ---------------- 修复的柔和版紫色 ---------------- */
         .btn-sub-English { background: #38bdf8; border-color: #38bdf8; color: white; box-shadow: 0 6px 0 #0284c7; }
-        .btn-sub-华文 { background: #f472b6; border-color: #f472b6; color: white; box-shadow: 0 6px 0 #db2777; }
-        .btn-sub-高华 { background: #a855f7; border-color: #a855f7; color: white; box-shadow: 0 6px 0 #7e22ce; }
-        .btn-sub-English.active, .btn-sub-华文.active, .btn-sub-高华.active { transform: translateY(6px); box-shadow: 0 0 0 transparent; filter: brightness(0.9); }
+        .btn-sub-English.active { transform: translateY(6px); box-shadow: 0 0 0 transparent; filter: brightness(0.95); }
+
+        .btn-sub-华文 { background: #c084fc; border-color: #c084fc; color: white; box-shadow: 0 6px 0 #a855f7; }
+        .btn-sub-华文.active { transform: translateY(6px); box-shadow: 0 0 0 transparent; filter: brightness(0.95); }
+
+        .btn-sub-高华 { background: #9333ea; border-color: #9333ea; color: white; box-shadow: 0 6px 0 #7e22ce; }
+        .btn-sub-高华.active { transform: translateY(6px); box-shadow: 0 0 0 transparent; filter: brightness(0.95); }
 
         .checkbox-grid { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-bottom: 30px; max-height: 380px; overflow-y: auto; padding: 10px; }
         .checkbox-label { padding: 14px 22px; border-radius: 30px; border: 3px solid #e2e8f0; background: white; cursor: pointer; font-weight: 800; font-size: 18px; color: var(--text-muted); transition: all 0.2s; user-select: none; box-shadow: 0 4px 0 #f1f5f9; }
@@ -315,16 +320,14 @@
     function finish() {
         const isAllRight = practiceList.every(q => !q.isWrong);
         
-        // 动态标题与表情设置
         let titleText = "你真棒！";
         let emojiIcon = isAllRight ? '🏆' : '👍';
         
-        // 🔥 零分彩蛋逻辑
+        // 🔥 0 分彩蛋判断
         if (totalCorrectCount === 0) {
             titleText = "你是来打酱油的吗？";
             emojiIcon = '🙈'; 
         } else if (isAllRight) {
-            // 全对时才放烟花和欢呼
             confetti({ particleCount: 250, spread: 100, origin: { y: 0.5 }, colors: ['#f472b6', '#38bdf8', '#a855f7', '#34d399'] });
             new Audio("https://actions.google.com/sounds/v1/foley/cheer_short.ogg").play().catch(()=>{});
         }
