@@ -38,6 +38,9 @@
         .checkbox-label input { display: none; }
         .checkbox-label:active { transform: translateY(4px); box-shadow: 0 0 0 transparent; }
         .checkbox-label.selected { border-color: #a855f7; background: #faf5ff; color: #7e22ce; box-shadow: 0 4px 0 #d8b4fe; }
+        .checkbox-label.wrong-selected { border-color: #f59e0b; background: #fffbeb; color: #d97706; box-shadow: 0 4px 0 #fcd34d; }
+
+        .sem-toggle.active { border-color: #3b82f6 !important; background: #eff6ff !important; color: #1d4ed8 !important; transform: translateY(4px); box-shadow: 0 0 0 transparent !important; }
 
         .progress-container { width: 100%; background: #f1f5f9; height: 16px; border-radius: 10px; margin-bottom: 25px; overflow: hidden; border: 2px solid #e2e8f0; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); }
         .progress-bar { height: 100%; background: linear-gradient(90deg, #34d399, #10b981); width: 0%; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 10px; }
@@ -62,8 +65,16 @@
         .btn-nav:active:not(:disabled) { transform: translateY(6px); box-shadow: 0 0 0 transparent; }
         .btn-nav:disabled { background: #e2e8f0 !important; color: #94a3b8 !important; box-shadow: 0 6px 0 #cbd5e1 !important; transform: translateY(0) !important; cursor: not-allowed; opacity: 0.8; }
 
-        .btn-review { background: #f59e0b; color: white; box-shadow: 0 6px 0 #d97706; padding: 14px 30px; font-size: 20px; width: auto; display: inline-flex; transition: 0.3s; }
-        .btn-review:active { transform: translateY(6px); box-shadow: 0 0 0 transparent; }
+        .action-panel { display: flex; gap: 15px; margin-top: 25px; height: 140px; width: 100%; }
+        .btn-square { flex: 0 0 140px; border-radius: 35px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; background: #f1f5f9; color: #64748b; border: 3px solid #e2e8f0; box-shadow: 0 6px 0 #cbd5e1; font-weight: 900; cursor: pointer; transition: 0.15s; }
+        .btn-square:active { transform: translateY(6px); box-shadow: 0 0 0 transparent; }
+        
+        .btn-stacked-col { display: flex; flex-direction: column; gap: 15px; flex: 1; }
+        .btn-stacked { flex: 1; width: 100%; margin: 0; border-radius: 25px; font-size: 22px; font-weight: 900; border: none; cursor: pointer; transition: 0.15s; display: flex; align-items: center; justify-content: center; color: white; }
+        .btn-stacked:active { transform: translateY(6px); box-shadow: 0 0 0 transparent; }
+        
+        .btn-review-stacked { background: #f59e0b; box-shadow: 0 6px 0 #d97706; }
+        .btn-practice-stacked { background: #10b981; box-shadow: 0 6px 0 #059669; }
 
         #thumb-up { position: absolute; font-size: 110px; display: none; z-index: 10; animation: thumbPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
         @keyframes thumbPop { 0% { transform: scale(0) rotate(-30deg); opacity: 0; } 50% { transform: scale(1.2) rotate(10deg); opacity: 1; } 100% { transform: scale(1) rotate(0deg); opacity: 0; } }
@@ -75,27 +86,29 @@
         .letter-btn.used { opacity: 0; pointer-events: none; }
         input.spell-input { font-size: 38px; padding: 15px; width: 100%; max-width: 380px; border: 4px solid #e2e8f0; border-radius: 22px; text-align: center; color: #0f172a; font-weight: 900; letter-spacing: 4px; }
 
+        #skip-char-btn { font-size: 16px; padding: 8px 20px; border-radius: 20px; background: #f1f5f9; color: #94a3b8; border: 2px solid #e2e8f0; margin-top: 15px; cursor: pointer; transition: 0.2s; font-weight: 800; }
+        #skip-char-btn:active { transform: scale(0.95); }
+
         @media (max-width: 768px) {
             body { padding: 10px; }
             .container { padding: 25px 15px; border-radius: 30px; }
             h1 { font-size: 28px; margin-bottom: 20px; }
-            
             .btn-choice { font-size: 18px; padding: 10px 20px; min-width: auto; }
             .checkbox-label { font-size: 16px; padding: 10px 16px; }
-            .btn-review { font-size: 16px; padding: 12px 20px; }
-            
+            .action-panel { height: 120px; gap: 12px; }
+            .btn-square { flex: 0 0 110px; border-radius: 25px; }
+            .btn-square span:first-child { font-size: 28px !important; }
+            .btn-square span:last-child { font-size: 18px !important; }
+            .btn-stacked-col { gap: 12px; }
+            .btn-stacked { border-radius: 20px; font-size: 18px; }
             .hanzi-box { width: 200px; height: 200px; border-radius: 18px; }
             .practice-area { min-height: 280px; padding: 20px 10px; margin-bottom: 15px; }
-            
             .hint-display { font-size: 24px; min-height: 70px; margin-bottom: 15px; }
             .hint-unit { font-size: 22px; padding: 6px 12px; }
-            
             .controls-row { height: 60px; margin-top: 10px; gap: 10px; }
             .btn-action { font-size: 18px; border-radius: 18px; }
-            
             .letter-btn { width: 45px; height: 55px; font-size: 26px; }
             input.spell-input { font-size: 28px; padding: 10px; border-width: 3px; }
-            
             #finish-screen h1 { font-size: 50px !important; }
             #finish-screen h2 { font-size: 28px !important; }
             #finish-screen p { font-size: 18px !important; }
@@ -118,13 +131,17 @@
 
     <div id="topic-screen" class="screen">
         <h1 id="topic-header">📝 选择任务</h1>
-        <div style="margin-bottom: 20px; text-align: center;">
-            <button class="btn-action btn-review" onclick="startReview(this)">🔥 复习挑战 (随机10题)</button>
-        </div>
+        <div id="semester-group" style="display: flex; justify-content: center; gap: 15px; margin-bottom: 20px;"></div>
         <div id="topic-list" class="checkbox-grid"></div>
-        <div class="controls-row">
-            <button class="btn-action btn-quit" style="flex:1" onclick="location.reload()">返回</button>
-            <button class="btn-action btn-nav" style="flex:3; background: #10b981; box-shadow: 0 6px 0 #059669;" onclick="startPractice()">开始啦！🚀</button>
+        <div class="action-panel">
+            <button class="btn-square" onclick="location.reload()">
+                <span style="font-size: 36px;">🏠</span>
+                <span style="font-size: 20px;">结束</span>
+            </button>
+            <div class="btn-stacked-col">
+                <button class="btn-stacked btn-review-stacked" onclick="startReview(this)">🔥 挑战 (10题)</button>
+                <button class="btn-stacked btn-practice-stacked" onclick="startPractice()">🚀 练习 (全练)</button>
+            </div>
         </div>
     </div>
 
@@ -136,6 +153,7 @@
         <div id="work-area" class="practice-area">
             <div id="thumb-up">👍</div>
             <div id="draw-target"></div>
+            <button id="skip-char-btn" style="display:none;" onclick="skipCurrentChar()">太简单，跳过 ⏭️</button>
         </div>
         
         <div class="controls-row">
@@ -154,6 +172,8 @@
     let db = {}, curUser = '', curSub = '', practiceList = [], curIdx = 0;
     let hzWriter = null, practiceChars = [];
     let totalCorrectCount = 0;
+    let currentWrongItems = [];
+    let currentMode = 'practice';
 
     function init() {
         Papa.parse(SHEET_URL + "&t=" + Date.now(), {
@@ -170,6 +190,8 @@
                         Hint: row['QUESTION'] || row['HINT'] || "",
                         Answer: row['CORRECT ANSWER'] || row['ANSWER'] || "",
                         isWrong: false,
+                        isCompleted: false, // 🔥 新增：记录这道题是否真正写完了
+                        mistakeChars: [], 
                         originalIndex: index 
                     });
                 });
@@ -211,9 +233,38 @@
         let n = s.match(/\d+/); return n ? parseInt(n[0]) : 999;
     }
 
+    function selectSemester(type, btn) {
+        btn.classList.toggle('active');
+        let isActive = btn.classList.contains('active');
+
+        document.querySelectorAll('#topic-list input').forEach(cb => {
+            let weight = getWeight(cb.value);
+            let isTopicA = weight <= 10;
+            let isTopicB = weight > 10 && weight < 999;
+            
+            if (type === 'A' && isTopicA) {
+                cb.checked = isActive;
+                cb.parentElement.classList.toggle('selected', isActive);
+            } else if (type === 'B' && isTopicB) {
+                cb.checked = isActive;
+                cb.parentElement.classList.toggle('selected', isActive);
+            }
+        });
+    }
+
     function loadTopics() {
         let pool = db[curUser][curSub];
         let topics = [...new Set(pool.map(q => q.Topic))].sort((a,b) => getWeight(a) - getWeight(b));
+        
+        const gradeMap = {'P1': '一', 'P2': '二', 'P3': '三', 'P4': '四', 'P5': '五', 'P6': '六'};
+        let gradeStr = gradeMap[curUser] || curUser;
+        
+        let semGroup = document.getElementById('semester-group');
+        semGroup.innerHTML = `
+            <button id="sem-btn-A" class="btn-choice sem-toggle" style="padding: 10px 24px; font-size: 18px; min-width: 100px; border-radius: 20px; box-shadow: 0 4px 0 #e2e8f0; transition: 0.2s;" onclick="selectSemester('A', this)">📖 ${gradeStr}上</button>
+            <button id="sem-btn-B" class="btn-choice sem-toggle" style="padding: 10px 24px; font-size: 18px; min-width: 100px; border-radius: 20px; box-shadow: 0 4px 0 #e2e8f0; transition: 0.2s;" onclick="selectSemester('B', this)">📘 ${gradeStr}下</button>
+        `;
+
         const list = document.getElementById('topic-list'); list.innerHTML = '';
         topics.forEach(t => {
             const lbl = document.createElement('label');
@@ -224,30 +275,38 @@
         showScreen('topic-screen');
     }
 
+    function resetPracticeList(list) {
+        list.forEach(q => {
+            q.isWrong = false;
+            q.isCompleted = false; // 🔥 重置完成状态
+            q.mistakeChars = []; 
+        });
+    }
+
     function startPractice() {
         let sel = [...document.querySelectorAll('#topic-list input:checked')].map(i => i.value);
         if(sel.length === 0) return;
+        
+        currentMode = 'practice'; 
         
         let pool = db[curUser][curSub].filter(q => sel.includes(q.Topic));
         const phrases = pool.filter(q => !/[，。！？]/u.test(q.Answer)).sort((a,b) => a.originalIndex - b.originalIndex);
         const sentences = pool.filter(q => /[，。！？]/u.test(q.Answer)).sort((a,b) => a.originalIndex - b.originalIndex);
         practiceList = [...phrases, ...sentences]; 
         
-        practiceList.forEach(q => q.isWrong = false);
+        resetPracticeList(practiceList);
         curIdx = 0; totalCorrectCount = 0; showScreen('practice-screen'); renderQuestion();
     }
 
     function startReview(btn) {
         let sel = [...document.querySelectorAll('#topic-list input:checked')].map(i => i.value);
         
-        if(sel.length === 0) return;
-        
-        if(sel.length === 1) {
+        if(sel.length < 2) {
+            if (btn.innerText.includes("至少选两课")) return;
             const originalText = btn.innerText;
-            btn.innerText = "你要复习哪几课？至少选两课。🐣";
+            btn.innerText = "至少选两课哦🐣";
             btn.style.background = "#f43f5e";
             btn.style.boxShadow = "0 6px 0 #be123c";
-            
             setTimeout(() => {
                 btn.innerText = originalText;
                 btn.style.background = ""; 
@@ -256,8 +315,9 @@
             return;
         }
 
+        currentMode = 'challenge'; 
+
         let pool = db[curUser][curSub].filter(q => sel.includes(q.Topic));
-        
         let phrases = pool.filter(q => !/[，。！？]/u.test(q.Answer));
         let sentences = pool.filter(q => /[，。！？]/u.test(q.Answer));
         
@@ -265,7 +325,6 @@
         sentences.sort(() => 0.5 - Math.random());
         
         let selectedQuestions = [];
-
         if (sentences.length > 0) {
             let p = phrases.slice(0, 9);
             selectedQuestions = [...p, sentences[0]];
@@ -274,12 +333,13 @@
         }
 
         practiceList = selectedQuestions;
-        practiceList.forEach(q => q.isWrong = false);
+        resetPracticeList(practiceList);
 
         curIdx = 0; totalCorrectCount = 0; showScreen('practice-screen'); renderQuestion();
     }
 
     function moveQuestion(step) {
+        // 🔥 彻底解除对翻页的限制，允许自由回翻
         let target = curIdx + step;
         if(target >= 0 && target < practiceList.length) { curIdx = target; renderQuestion(); }
         else if (target >= practiceList.length) { finish(); }
@@ -307,24 +367,50 @@
         if(curSub === 'English') setupEnglish(q); else setupChinese(q);
     }
 
-    function setupChinese(q) {
-        const word = q.Answer.trim();
-        const pinyins = q.Hint.trim().split(/\s+/);
-        practiceChars = [];
-        let pIdx = 0;
-        for(let char of word) {
-            let isP = /[，。！？、：；（）《》“”" "]/u.test(char);
-            practiceChars.push({ char, pinyin: isP ? char : (pinyins[pIdx++] || ''), isP, done: isP });
+   // 🔥 替换 1：渲染拼音/汉字块的逻辑
+   function setupChinese(q) {
+        if (currentMode === 'challenge') {
+            document.getElementById('skip-char-btn').style.display = 'none';
+        } else {
+            document.getElementById('skip-char-btn').style.display = 'block'; 
         }
-        document.getElementById('hint-area').innerHTML = practiceChars.map((item, i) => 
-            `<div class="hint-unit ${item.done?'done':''}" id="py-${i}" onclick="jumpTo(${i})">${item.pinyin}</div>`
-        ).join('');
+
+        if (!q.charsData) {
+            const word = q.Answer.trim();
+            const pinyins = q.Hint.trim().split(/\s+/);
+            q.charsData = [];
+            let pIdx = 0;
+            for(let char of word) {
+                let isP = /[，。！？、：；（）《》“”" "]/u.test(char);
+                q.charsData.push({ char, pinyin: isP ? char : (pinyins[pIdx++] || ''), isP, done: isP });
+            }
+        }
+        practiceChars = q.charsData;
+
+        // 核心改动：根据是否写完，决定里面显示什么
+        document.getElementById('hint-area').innerHTML = practiceChars.map((item, i) => {
+            let innerHtml = '';
+            if (item.isP) {
+                // 标点符号
+                innerHtml = `<div style="font-size:32px; line-height:1.2; padding-top:6px;">${item.char}</div>`;
+            } else if (item.done) {
+                // 写对的字：上面小拼音，下面大汉字！
+                innerHtml = `<div style="font-size:14px; line-height:1; opacity:0.8;">${item.pinyin}</div>
+                             <div style="font-size:32px; font-weight:900; line-height:1.2; margin-top:2px;">${item.char}</div>`;
+            } else {
+                // 没写的字：只有大拼音
+                innerHtml = `<div style="font-size:26px; line-height:1.2; padding-top:6px;">${item.pinyin}</div>`;
+            }
+            return `<div class="hint-unit ${item.done?'done':''}" id="py-${i}" onclick="jumpTo(${i})">${innerHtml}</div>`;
+        }).join('');
         
         autoJump();
     }
 
+    // 🔥 替换 2：写字和判定逻辑
     function jumpTo(idx) {
-        if(practiceChars[idx].isP) return;
+        if(practiceChars[idx].isP || practiceChars[idx].done) return; 
+
         document.querySelectorAll('.hint-unit').forEach((el, i) => el.classList.toggle('active', i === idx));
         document.getElementById('draw-target').innerHTML = `<div id="hz-box" class="hanzi-box"></div>`;
         
@@ -333,16 +419,50 @@
         hzWriter = HanziWriter.create('hz-box', practiceChars[idx].char, {
             width: boxSize, height: boxSize, padding: 15, showOutline: false, strokeColor: '#1e293b', drawingColor: '#3b82f6'
         });
+
+        let charHasMistake = false;
+
         hzWriter.quiz({ 
-            onMistake: () => { practiceList[curIdx].isWrong = true; },
+            onMistake: () => { 
+                let q = practiceList[curIdx];
+                q.isWrong = true; 
+                let currentChar = practiceChars[idx].char;
+                if (!q.mistakeChars.find(c => c.char === currentChar)) {
+                    q.mistakeChars.push({ char: currentChar, pinyin: practiceChars[idx].pinyin });
+                }
+                charHasMistake = true;
+            },
             onComplete: () => {
                 showThumb();
-                totalCorrectCount++;
+                if (!charHasMistake && !practiceChars[idx].done) { totalCorrectCount++; }
+                
                 practiceChars[idx].done = true;
-                document.getElementById(`py-${idx}`).classList.add('done');
+                let pyEl = document.getElementById(`py-${idx}`);
+                pyEl.classList.add('done');
+                
+                // 核心改动：写完后瞬间把拼音变成“拼音+汉字”的形式
+                pyEl.innerHTML = `<div style="font-size:14px; line-height:1; opacity:0.8;">${practiceChars[idx].pinyin}</div>
+                                  <div style="font-size:32px; font-weight:900; line-height:1.2; margin-top:2px;">${practiceChars[idx].char}</div>`;
+                
                 setTimeout(autoJump, 600);
             }
         });
+    }
+
+    // 🔥 替换 3：跳过按钮逻辑
+    function skipCurrentChar() {
+        let idx = practiceChars.findIndex(i => !i.done);
+        if(idx !== -1) {
+            practiceChars[idx].done = true;
+            let pyEl = document.getElementById(`py-${idx}`);
+            pyEl.classList.add('done');
+            
+            // 核心改动：跳过后也把汉字显示出来
+            pyEl.innerHTML = `<div style="font-size:14px; line-height:1; opacity:0.8;">${practiceChars[idx].pinyin}</div>
+                              <div style="font-size:32px; font-weight:900; line-height:1.2; margin-top:2px;">${practiceChars[idx].char}</div>`;
+            
+            autoJump(); 
+        }
     }
 
     function showThumb() {
@@ -355,10 +475,16 @@
 
     function autoJump() {
         let next = practiceChars.findIndex(i => !i.done);
-        if(next !== -1) jumpTo(next);
+        if(next !== -1) {
+            jumpTo(next);
+        } else {
+            // 🔥 核心：只有所有的字都写完（或跳过），才给这道题打上“已完成”的标记
+            practiceList[curIdx].isCompleted = true;
+        }
     }
 
     function setupEnglish(q) {
+        document.getElementById('skip-char-btn').style.display = 'none'; 
         const answer = q.Answer.toLowerCase().trim();
         document.getElementById('hint-area').innerHTML = `<div style="font-size:28px; color:#64748b; font-weight:800;">${q.Hint}</div>`;
         let letters = answer.split('');
@@ -378,16 +504,63 @@
             showThumb();
             input.style.borderColor = "#10b981";
             input.style.color = "#10b981";
+            practiceList[curIdx].isCompleted = true; // 🔥 英文全对才算完成
             totalCorrectCount += practiceList[curIdx].Answer.length;
             setTimeout(() => moveQuestion(1), 800);
+        } else {
+            let expected = practiceList[curIdx].Answer.toLowerCase().trim();
+            if(!expected.startsWith(input.value.toLowerCase())) {
+                practiceList[curIdx].isWrong = true;
+            }
         }
     }
 
-    // 🔥 核心更新：错字重练结算逻辑
     function finish() {
-        const wrongItems = practiceList.filter(q => q.isWrong);
-        const isAllRight = wrongItems.length === 0;
-        
+        // 🔥 交卷终极核查：发现没写完的题，立刻算错，并把没写的字揪出来
+        practiceList.forEach(q => {
+            if (!q.isCompleted) {
+                q.isWrong = true;
+                if (curSub !== 'English') {
+                    let word = q.Answer.trim();
+                    let pinyins = q.Hint.trim().split(/\s+/);
+                    let pIdx = 0;
+                    for (let i = 0; i < word.length; i++) {
+                        let char = word[i];
+                        let isP = /[，。！？、：；（）《》“”" "]/u.test(char);
+                        let py = isP ? char : (pinyins[pIdx++] || '');
+                        if (!isP && !q.mistakeChars.find(mc => mc.char === char)) {
+                            q.mistakeChars.push({ char: char, pinyin: py });
+                        }
+                    }
+                }
+            }
+        });
+
+        // 判定完后，再去显示对应的结算画面
+        if (currentMode === 'challenge') {
+            showChallengeResult();
+        } else {
+            showPracticeResult();
+        }
+    }
+
+    function showPracticeResult() {
+        currentWrongItems = [];
+        if (curSub === 'English') {
+            currentWrongItems = practiceList.filter(q => q.isWrong);
+        } else {
+            let wrongMap = new Map();
+            practiceList.forEach(q => {
+                if (q.mistakeChars && q.mistakeChars.length > 0) {
+                    q.mistakeChars.forEach(mc => { wrongMap.set(mc.char, mc); });
+                }
+            });
+            currentWrongItems = Array.from(wrongMap.values()).map(mc => ({
+                Answer: mc.char, Hint: mc.pinyin, Topic: '错字重练', isWrong: false, isCompleted: false, mistakeChars: []
+            }));
+        }
+
+        const isAllRight = currentWrongItems.length === 0;
         let titleText = "你真棒！";
         let emojiIcon = isAllRight ? '🏆' : '👍';
         
@@ -408,16 +581,14 @@
                 </p>
         `;
 
-        // 如果有错字，渲染自选重练区域
         if (!isAllRight) {
             html += `
                 <div style="margin-top: 30px; background: #fffbeb; padding: 25px 15px; border-radius: 25px; border: 3px dashed #fcd34d;">
                     <h3 style="color: #d97706; margin-top: 0; font-size: 22px; margin-bottom: 15px;">请选择你要再练一练的字 🐣</h3>
                     <div class="checkbox-grid" id="wrong-list" style="margin-bottom: 25px;">
             `;
-            wrongItems.forEach((q, idx) => {
-                // 默认选中，样式区别于选题
-                html += `<label class="checkbox-label selected" style="border-color:#f59e0b; background:#fef3c7; color:#b45309;"><input type="checkbox" value="${idx}" checked onchange="this.parentElement.classList.toggle('selected', this.checked)"> ${q.Answer}</label>`;
+            currentWrongItems.forEach((q, idx) => {
+                html += `<label class="checkbox-label"><input type="checkbox" value="${idx}" onchange="this.parentElement.classList.toggle('wrong-selected', this.checked)"> ${q.Answer}</label>`;
             });
             html += `
                     </div>
@@ -437,16 +608,63 @@
         showScreen('finish-screen');
     }
 
-    // 🔥 启动自选错字练习
-    function startRetry() {
-        let wrongItems = practiceList.filter(q => q.isWrong);
-        let selectedIndexes = [...document.querySelectorAll('#wrong-list input:checked')].map(i => parseInt(i.value));
+    function showChallengeResult() {
+        let accuracy = 0;
+
+        if (curSub === 'English') {
+            let totalItems = practiceList.length;
+            let wrongItems = practiceList.filter(q => q.isWrong).length;
+            accuracy = totalItems > 0 ? (totalItems - wrongItems) / totalItems : 0;
+        } else {
+            let totalChars = 0;
+            let wrongChars = 0;
+            practiceList.forEach(q => {
+                totalChars += q.Answer.replace(/[，。！？、：；（）《》“”" "]/g, '').length;
+                // 确保错字不重复计算
+                let uniqueMistakes = new Set(q.mistakeChars.map(mc => mc.char));
+                wrongChars += uniqueMistakes.size;
+            });
+            accuracy = totalChars > 0 ? Math.max(0, (totalChars - wrongChars) / totalChars) : 0;
+        }
+
+        let emoji, stars, message, color;
+        if (accuracy >= 0.9) {
+            emoji = '🤩'; stars = '⭐⭐⭐⭐⭐'; message = '太棒啦！你真聪明！'; color = '#f59e0b'; 
+            confetti({ particleCount: 300, spread: 100, origin: { y: 0.5 }, colors: ['#fbbf24', '#f59e0b', '#fb923c'] });
+            new Audio("https://actions.google.com/sounds/v1/foley/cheer_short.ogg").play().catch(()=>{});
+        } else if (accuracy >= 0.7) {
+            emoji = '😊'; stars = '⭐⭐⭐⭐'; message = '很棒哦！只有一点点错！'; color = '#38bdf8'; 
+            confetti({ particleCount: 150, spread: 80, origin: { y: 0.5 }, colors: ['#38bdf8', '#bae6fd'] });
+        } else if (accuracy >= 0.5) {
+            emoji = '✊'; stars = '⭐⭐⭐'; message = '不错哦！还要继续努力！'; color = '#a855f7'; 
+        } else {
+            emoji = '💪'; stars = '⭐⭐'; message = '加油！多写几次就记住啦！'; color = '#10b981'; 
+        }
+
+        let html = `
+            <div style="padding:40px 0;">
+                <h2 style="font-size:24px; color:#94a3b8; margin-bottom:15px; font-weight:900;">🏅 挑战结果</h2>
+                <h1 style="font-size:90px; text-shadow:none; margin-top:0; margin-bottom:10px;">${emoji}</h1>
+                <h2 style="font-size:46px; color:${color}; margin-top:0; font-weight:900;">${stars}</h2>
+                <p style="font-size:24px; color:#475569; margin:30px 0 40px 0; font-weight:800; line-height:1.5;">
+                    ${message}
+                </p>
+                <div class="controls-row" style="justify-content: center; margin-top: 40px;">
+                    <button class="btn-action btn-quit" style="width: 220px; height: 65px; flex: none;" onclick="location.reload()">结束挑战 🏠</button>
+                </div>
+            </div>
+        `;
         
+        document.getElementById('finish-screen').innerHTML = html;
+        showScreen('finish-screen');
+    }
+
+    function startRetry() {
+        let selectedIndexes = [...document.querySelectorAll('#wrong-list input:checked')].map(i => parseInt(i.value));
         if (selectedIndexes.length === 0) return;
 
-        // 仅保留用户勾选的错字进入新的一轮
-        practiceList = selectedIndexes.map(idx => wrongItems[idx]);
-        practiceList.forEach(q => q.isWrong = false);
+        practiceList = selectedIndexes.map(idx => currentWrongItems[idx]);
+        resetPracticeList(practiceList);
         
         curIdx = 0; 
         totalCorrectCount = 0; 
@@ -461,5 +679,6 @@
 
     init();
 </script>
+
 </body>
 </html>
