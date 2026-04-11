@@ -24,7 +24,6 @@
         
         .btn-choice.active { border-color: #3b82f6; background: #eff6ff; color: #1d4ed8; box-shadow: 0 6px 0 #93c5fd; }
         
-        /* 科目专属配色 */
         .btn-sub-English { background: #38bdf8; border-color: #38bdf8; color: white; box-shadow: 0 6px 0 #0284c7; }
         .btn-sub-English.active { transform: translateY(6px); box-shadow: 0 0 0 transparent; filter: brightness(0.95); }
 
@@ -63,7 +62,6 @@
         .btn-nav:active:not(:disabled) { transform: translateY(6px); box-shadow: 0 0 0 transparent; }
         .btn-nav:disabled { background: #e2e8f0 !important; color: #94a3b8 !important; box-shadow: 0 6px 0 #cbd5e1 !important; transform: translateY(0) !important; cursor: not-allowed; opacity: 0.8; }
 
-        /* 复习挑战专属按钮样式 */
         .btn-review { background: #f59e0b; color: white; box-shadow: 0 6px 0 #d97706; padding: 14px 30px; font-size: 20px; width: auto; display: inline-flex; transition: 0.3s; }
         .btn-review:active { transform: translateY(6px); box-shadow: 0 0 0 transparent; }
 
@@ -77,9 +75,6 @@
         .letter-btn.used { opacity: 0; pointer-events: none; }
         input.spell-input { font-size: 38px; padding: 15px; width: 100%; max-width: 380px; border: 4px solid #e2e8f0; border-radius: 22px; text-align: center; color: #0f172a; font-weight: 900; letter-spacing: 4px; }
 
-        /* =========================================
-           📱 手机端专属优化 (Responsive Mobile Design)
-           ========================================= */
         @media (max-width: 768px) {
             body { padding: 10px; }
             .container { padding: 25px 15px; border-radius: 30px; }
@@ -229,7 +224,6 @@
         showScreen('topic-screen');
     }
 
-    // 正常练习
     function startPractice() {
         let sel = [...document.querySelectorAll('#topic-list input:checked')].map(i => i.value);
         if(sel.length === 0) return;
@@ -243,7 +237,6 @@
         curIdx = 0; totalCorrectCount = 0; showScreen('practice-screen'); renderQuestion();
     }
 
-    // 复习挑战
     function startReview(btn) {
         let sel = [...document.querySelectorAll('#topic-list input:checked')].map(i => i.value);
         
@@ -335,7 +328,6 @@
         document.querySelectorAll('.hint-unit').forEach((el, i) => el.classList.toggle('active', i === idx));
         document.getElementById('draw-target').innerHTML = `<div id="hz-box" class="hanzi-box"></div>`;
         
-        // 手机屏幕适配动态尺寸
         let boxSize = window.innerWidth <= 768 ? 200 : 260;
         
         hzWriter = HanziWriter.create('hz-box', practiceChars[idx].char, {
@@ -391,13 +383,15 @@
         }
     }
 
+    // 🔥 核心更新：错字重练结算逻辑
     function finish() {
-        const isAllRight = practiceList.every(q => !q.isWrong);
+        const wrongItems = practiceList.filter(q => q.isWrong);
+        const isAllRight = wrongItems.length === 0;
         
         let titleText = "你真棒！";
         let emojiIcon = isAllRight ? '🏆' : '👍';
         
-        if (totalCorrectCount === 0) {
+        if (totalCorrectCount === 0 && practiceList.length > 0) {
             titleText = "你是来打酱油的吗？";
             emojiIcon = '🙈'; 
         } else if (isAllRight) {
@@ -405,19 +399,59 @@
             new Audio("https://actions.google.com/sounds/v1/foley/cheer_short.ogg").play().catch(()=>{});
         }
         
-        document.getElementById('finish-screen').innerHTML = `
+        let html = `
             <div style="padding:40px 0;">
                 <h1 style="font-size:70px; text-shadow:none; margin-bottom:10px;">${emojiIcon}</h1>
                 <h2 style="font-size:36px; color:#0f172a; margin-top:0;">${titleText}</h2>
                 <p style="font-size:22px; color:#475569; margin:25px 0; font-weight:800;">
                     这一次你写对了 <br><span style="color:#10b981; font-size:40px; display:inline-block; margin-top:10px;">${totalCorrectCount}</span> 个字！
                 </p>
-                <div class="controls-row" style="justify-content: center; margin-top: 40px;">
+        `;
+
+        // 如果有错字，渲染自选重练区域
+        if (!isAllRight) {
+            html += `
+                <div style="margin-top: 30px; background: #fffbeb; padding: 25px 15px; border-radius: 25px; border: 3px dashed #fcd34d;">
+                    <h3 style="color: #d97706; margin-top: 0; font-size: 22px; margin-bottom: 15px;">请选择你要再练一练的字 🐣</h3>
+                    <div class="checkbox-grid" id="wrong-list" style="margin-bottom: 25px;">
+            `;
+            wrongItems.forEach((q, idx) => {
+                // 默认选中，样式区别于选题
+                html += `<label class="checkbox-label selected" style="border-color:#f59e0b; background:#fef3c7; color:#b45309;"><input type="checkbox" value="${idx}" checked onchange="this.parentElement.classList.toggle('selected', this.checked)"> ${q.Answer}</label>`;
+            });
+            html += `
+                    </div>
+                    <button class="btn-action btn-nav" style="width: 220px; height: 60px; margin: 0 auto; background: #f59e0b; box-shadow: 0 6px 0 #d97706;" onclick="startRetry()">我爱学习 🚀</button>
+                </div>
+            `;
+        }
+
+        html += `
+                <div class="controls-row" style="justify-content: center; margin-top: ${isAllRight ? '40px' : '20px'};">
                     <button class="btn-action btn-quit" style="width: 200px; height: 65px; flex: none;" onclick="location.reload()">结束</button>
                 </div>
             </div>
         `;
+        
+        document.getElementById('finish-screen').innerHTML = html;
         showScreen('finish-screen');
+    }
+
+    // 🔥 启动自选错字练习
+    function startRetry() {
+        let wrongItems = practiceList.filter(q => q.isWrong);
+        let selectedIndexes = [...document.querySelectorAll('#wrong-list input:checked')].map(i => parseInt(i.value));
+        
+        if (selectedIndexes.length === 0) return;
+
+        // 仅保留用户勾选的错字进入新的一轮
+        practiceList = selectedIndexes.map(idx => wrongItems[idx]);
+        practiceList.forEach(q => q.isWrong = false);
+        
+        curIdx = 0; 
+        totalCorrectCount = 0; 
+        showScreen('practice-screen'); 
+        renderQuestion();
     }
 
     function showScreen(id) { 
