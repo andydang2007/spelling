@@ -75,6 +75,42 @@
         .letter-btn:active { transform: translateY(4px); box-shadow: 0 0 0 transparent; }
         .letter-btn.used { opacity: 0; pointer-events: none; }
         input.spell-input { font-size: 38px; padding: 15px; width: 100%; max-width: 380px; border: 4px solid #e2e8f0; border-radius: 22px; text-align: center; color: #0f172a; font-weight: 900; letter-spacing: 4px; }
+        /* =========================================
+           📱 手机端专属优化 (Responsive Mobile Design)
+           当屏幕宽度小于 768px 时，自动触发以下规则
+           ========================================= */
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .container { padding: 25px 15px; border-radius: 30px; }
+            h1 { font-size: 28px; margin-bottom: 20px; }
+            
+            /* 缩小各个按钮，适应小屏幕 */
+            .btn-choice { font-size: 18px; padding: 10px 20px; min-width: auto; }
+            .checkbox-label { font-size: 16px; padding: 10px 16px; }
+            .btn-review { font-size: 16px; padding: 12px 20px; }
+            
+            /* 缩小田字格，防止手机屏幕被撑出横向滚动条 */
+            .hanzi-box { width: 200px; height: 200px; border-radius: 18px; }
+            .practice-area { min-height: 280px; padding: 20px 10px; }
+            
+            /* 拼音字号和间距调小 */
+            .hint-display { font-size: 24px; min-height: 70px; }
+            .hint-unit { font-size: 22px; padding: 6px 12px; }
+            
+            /* 底部导航按钮变得更紧凑 */
+            .controls-row { height: 60px; margin-top: 10px; gap: 10px; }
+            .btn-action { font-size: 18px; border-radius: 18px; }
+            
+            /* 英文输入框和字母键盘适配 */
+            .letter-btn { width: 45px; height: 55px; font-size: 26px; }
+            input.spell-input { font-size: 28px; padding: 10px; border-width: 3px; }
+            
+            /* 结算界面的超大字号等比例缩小 */
+            #finish-screen h1 { font-size: 50px !important; }
+            #finish-screen h2 { font-size: 28px !important; }
+            #finish-screen p { font-size: 18px !important; }
+            #finish-screen span { font-size: 32px !important; }
+        }
     </style>
 </head>
 <body>
