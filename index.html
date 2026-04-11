@@ -627,37 +627,49 @@
             accuracy = totalChars > 0 ? Math.max(0, (totalChars - wrongChars) / totalChars) : 0;
         }
 
+// 第一步：只负责计算星星、文案和放礼花（和你最开始的代码几乎一样）
 let emoji, stars, message, color;
 
-        if (accuracy >= 0.9) {
-            emoji = '🤩'; 
-            stars = '⭐⭐⭐⭐⭐'; 
-            color = '#f59e0b'; 
-            
-            // 特效与音效
-            confetti({ particleCount: 300, spread: 100, origin: { y: 0.5 }, colors: ['#fbbf24', '#f59e0b', '#fb923c'] });
-            new Audio("https://actions.google.com/sounds/v1/foley/cheer_short.ogg").play().catch(()=>{});
+if (accuracy >= 0.9) {
+    emoji = '🤩'; 
+    stars = '⭐⭐⭐⭐⭐'; 
+    // 文案稍微改一下，告诉她有奖励
+    message = '太棒啦！几乎全对！3秒后进入奖励游戏...'; 
+    color = '#f59e0b'; 
+    confetti({ particleCount: 300, spread: 100, origin: { y: 0.5 }, colors: ['#fbbf24', '#f59e0b', '#fb923c'] });
+    new Audio("https://actions.google.com/sounds/v1/foley/cheer_short.ogg").play().catch(()=>{});
+} else if (accuracy >= 0.7) {
+    emoji = '😊'; 
+    stars = '⭐⭐⭐⭐'; 
+    message = '很棒哦！只有一点点错！'; 
+    color = '#38bdf8'; 
+    confetti({ particleCount: 150, spread: 80, origin: { y: 0.5 }, colors: ['#38bdf8', '#bae6fd'] });
+} else if (accuracy >= 0.5) {
+    emoji = '✊'; 
+    stars = '⭐⭐⭐'; 
+    message = '不错哦！还要继续努力！'; 
+    color = '#a855f7'; 
+} else {
+    emoji = '💪'; 
+    stars = '⭐⭐'; 
+    message = '加油！多写几次就记住啦！'; 
+    color = '#10b981'; 
+}
 
-            // 新增：挑战模式 5星 专属跳转逻辑
-            // 注意：请将 isChallengeMode 替换为你代码中实际用来判断“是否为挑战模式”的变量。
-            // 如果这个算分逻辑原本就只在挑战模式下运行，则可以直接去掉 if 判断。
-            if (isChallengeMode) { 
-                message = '太棒啦！全对！Bonus Game in 3 second...'; 
-                setTimeout(function() {
-                    window.location.href = "https://andydang2007.github.io/game/psle.html";
-                }, 3000);
-            } else {
-                message = '太棒啦！你真聪明！'; 
-            }
-            
-        } else if (accuracy >= 0.7) {
-            emoji = '😊'; stars = '⭐⭐⭐⭐'; message = '很棒哦！只有一点点错！'; color = '#38bdf8'; 
-            confetti({ particleCount: 150, spread: 80, origin: { y: 0.5 }, colors: ['#38bdf8', '#bae6fd'] });
-        } else if (accuracy >= 0.5) {
-            emoji = '✊'; stars = '⭐⭐⭐'; message = '不错哦！还要继续努力！'; color = '#a855f7'; 
-        } else {
-            emoji = '💪'; stars = '⭐⭐'; message = '加油！多写几次就记住啦！'; color = '#10b981'; 
-        }
+// ---------------------------------------------------------
+// ⚠️ 注意：在你的完整代码里，这里下方应该原本就有几行代码，
+// 负责把上面算出来的 emoji、stars、message 显示到 HTML 屏幕上。
+// 比如：document.getElementById('stars-box').innerText = stars;
+// 请保持它们原封不动，让屏幕先把星星显示出来！
+// ---------------------------------------------------------
+
+// 第二步：单独在这里加上跳转逻辑
+if (accuracy >= 0.9) {
+    // 只有在全对（5星）的情况下，才启动这个 3 秒后的跳转
+    setTimeout(function() {
+        window.location.href = "https://andydang2007.github.io/game/psle.html";
+    }, 3000);
+}
 
         let html = `
             <div style="padding:40px 0;">
