@@ -42,7 +42,7 @@
         .btn-sub-高华 { background: #9333ea; border-color: #9333ea; color: white; box-shadow: 0 6px 0 #7e22ce; }
         .btn-sub-高华.active { transform: translateY(6px); box-shadow: 0 0 0 transparent; filter: brightness(0.95); }
 
-        .checkbox-grid { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-bottom: 20px; padding: 10px; flex: 1; overflow-y: auto; align-content: flex-start; }
+        .checkbox-grid { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-bottom: 10px; padding: 10px; flex: 1; overflow-y: auto; align-content: flex-start; }
         .checkbox-label { padding: 14px 22px; border-radius: 30px; border: 3px solid #e2e8f0; background: white; cursor: pointer; font-weight: 800; font-size: 18px; color: var(--text-muted); transition: all 0.2s; user-select: none; box-shadow: 0 4px 0 #f1f5f9; height: fit-content; }
         .checkbox-label input { display: none; }
         .checkbox-label:active { transform: translateY(4px); box-shadow: 0 0 0 transparent; }
@@ -51,7 +51,8 @@
 
         .sem-toggle.active { border-color: #3b82f6 !important; background: #eff6ff !important; color: #1d4ed8 !important; transform: translateY(4px); box-shadow: 0 0 0 transparent !important; }
 
-        .action-panel { display: flex; gap: 15px; margin-top: 5px; height: 140px; width: 100%; flex: none; }
+        /* 🟢 修复底边遮挡：增加 padding-bottom，确保阴影空间 */
+        .action-panel { display: flex; gap: 15px; margin-top: 10px; height: auto; min-height: 130px; padding-bottom: 20px; width: 100%; flex: none; }
         .btn-square { flex: 0 0 140px; border-radius: 35px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; background: #f1f5f9; color: #64748b; border: 3px solid #e2e8f0; box-shadow: 0 6px 0 #cbd5e1; font-weight: 900; cursor: pointer; transition: 0.15s; }
         .btn-square:active { transform: translateY(6px); box-shadow: 0 0 0 transparent; }
         .btn-stacked-col { display: flex; flex-direction: column; gap: 15px; flex: 1; }
@@ -66,9 +67,12 @@
         
         .hint-display { font-size: 32px; font-weight: bold; color: #334155; margin-bottom: 20px; min-height: 90px; display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; align-content: center; flex: none; }
         .hint-unit { cursor: pointer; padding: 8px 16px; border-radius: 18px; border: 3px solid #e2e8f0; background: #fff; min-width: 60px; text-align: center; font-size: 26px; transition: 0.2s; box-shadow: 0 4px 0 #f1f5f9; }
+        
+        /* 🟢 三种状态UI控制：进行中(橙色凸起)、写完(绿色扁平)、跳过(橙色扁平) */
         .hint-unit:active { transform: translateY(4px); box-shadow: 0 0 0 transparent; }
         .hint-unit.active { color: #ea580c; background: #fff7ed; border-color: #fb923c; transform: scale(1.1); box-shadow: 0 6px 0 #f97316; z-index: 2; }
         .hint-unit.done { color: #10b981; background: #ecfdf5; border-color: #6ee7b7; box-shadow: 0 0 0 transparent; transform: translateY(4px); cursor: default; }
+        .hint-unit.skipped { color: #ea580c; background: #fff7ed; border-color: #fb923c; box-shadow: 0 0 0 transparent; transform: translateY(4px); cursor: pointer; } /* 跳过允许再次点击 */
 
         .practice-main { display: flex; flex-direction: column; flex: 1; width: 100%; min-height: 0; }
         .practice-area { background: #f8fafc; padding: 25px 15px; border-radius: 35px; border: 4px dashed #cbd5e1; margin-bottom: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; position: relative; overflow: hidden; min-height: 250px;}
@@ -105,7 +109,7 @@
             h1 { font-size: 28px; margin-bottom: 15px; }
             .btn-choice { font-size: 18px; padding: 10px 20px; min-width: auto; }
             .checkbox-label { font-size: 16px; padding: 10px 16px; }
-            .action-panel { height: 120px; gap: 12px; margin-top: 10px; }
+            .action-panel { min-height: 120px; gap: 12px; margin-top: 10px; padding-bottom: 20px; }
             .btn-square { flex: 0 0 110px; border-radius: 25px; }
             .btn-square span:first-child { font-size: 28px !important; }
             .btn-square span:last-child { font-size: 18px !important; }
@@ -124,7 +128,6 @@
             #finish-screen p { font-size: 18px !important; }
         }
 
-        /* 💻 平板横屏专属适配：高度利用，右侧操作栏优化（上1下2布局） */
         @media (orientation: landscape) and (min-width: 768px) {
             .container { max-width: 1000px; padding: 25px 40px; height: 95dvh; }
             .practice-main { flex-direction: row; align-items: flex-start; gap: 30px; }
@@ -192,7 +195,7 @@
             </div>
             
             <div class="controls-row">
-                <button class="btn-action btn-quit" onclick="location.reload()">结束测试 🏠</button>
+                <button id="quit-btn" class="btn-action btn-quit" onclick="location.reload()">结束测试 🏠</button>
                 <button id="prev-btn" class="btn-action btn-nav" onclick="moveQuestion(-1)">⬅️ 上一个</button>
                 <button id="next-btn" class="btn-action btn-nav" onclick="moveQuestion(1)">下一个 ➡️</button>
             </div>
@@ -324,6 +327,8 @@
         if(sel.length === 0) return;
         
         currentMode = 'practice'; 
+        // 🟢 智能更改退出按钮文字
+        document.getElementById('quit-btn').innerText = '结束练习 🏠';
         
         let pool = db[curUser][curSub].filter(q => sel.includes(q.Topic));
         const phrases = pool.filter(q => !/[，。！？]/u.test(q.Answer)).sort((a,b) => a.originalIndex - b.originalIndex);
@@ -352,6 +357,8 @@
         }
 
         currentMode = 'challenge'; 
+        // 🟢 智能更改退出按钮文字
+        document.getElementById('quit-btn').innerText = '结束测试 🏠';
 
         let pool = db[curUser][curSub].filter(q => sel.includes(q.Topic));
         let phrases = pool.filter(q => !/[，。！？]/u.test(q.Answer));
@@ -402,11 +409,19 @@
         if(curSub === 'English') setupEnglish(q); else setupChinese(q);
     }
 
-    // 🟢 核心修复点 1：每次切题时强制隐藏按钮、清空画板
     function setupChinese(q) {
-        document.getElementById('skip-char-btn').style.display = 'none'; 
-        document.getElementById('peek-btn').style.display = 'none'; 
         document.getElementById('draw-target').innerHTML = '';
+
+        // 🟢 智能控制跳过按钮文案
+        if (currentMode === 'challenge') {
+            document.getElementById('skip-char-btn').style.display = 'block'; 
+            document.getElementById('skip-char-btn').innerText = '不会写，跳过 ⏭️';
+            document.getElementById('peek-btn').style.display = 'none';
+        } else {
+            document.getElementById('skip-char-btn').style.display = 'block'; 
+            document.getElementById('skip-char-btn').innerText = '太简单，跳过 ⏭️';
+            document.getElementById('peek-btn').style.display = 'block'; 
+        }
 
         if (!q.charsData) {
             const word = q.Answer.trim();
@@ -415,7 +430,7 @@
             let pIdx = 0;
             for(let char of word) {
                 let isP = /[，。！？、：；（）《》“”" "]/u.test(char);
-                q.charsData.push({ char, pinyin: isP ? char : (pinyins[pIdx++] || ''), isP, done: isP });
+                q.charsData.push({ char, pinyin: isP ? char : (pinyins[pIdx++] || ''), isP, done: isP, skipped: false });
             }
         }
         practiceChars = q.charsData;
@@ -425,34 +440,53 @@
             if (item.isP) {
                 innerHtml = `<div style="font-size:32px; line-height:1.2; padding-top:6px;">${item.char}</div>`;
             } else if (item.done) {
-                innerHtml = `<div style="font-size:14px; line-height:1; opacity:0.8;">${item.pinyin}</div>
-                             <div style="font-size:32px; font-weight:900; line-height:1.2; margin-top:2px;">${item.char}</div>`;
+                // 🟢 挑战模式：写对了也不显示汉字，只显示绿色拼音
+                if (currentMode === 'challenge') {
+                    innerHtml = `<div style="font-size:26px; line-height:1.2; padding-top:6px;">${item.pinyin}</div>`;
+                } else {
+                    innerHtml = `<div style="font-size:14px; line-height:1; opacity:0.8;">${item.pinyin}</div>
+                                 <div style="font-size:32px; font-weight:900; line-height:1.2; margin-top:2px;">${item.char}</div>`;
+                }
+            } else if (item.skipped) {
+                // 跳过的字，无论什么模式都只显示拼音
+                innerHtml = `<div style="font-size:26px; line-height:1.2; padding-top:6px;">${item.pinyin}</div>`;
             } else {
                 innerHtml = `<div style="font-size:26px; line-height:1.2; padding-top:6px;">${item.pinyin}</div>`;
             }
-            return `<div class="hint-unit ${item.done?'done':''}" id="py-${i}" onclick="jumpTo(${i})">${innerHtml}</div>`;
+            
+            let stateClass = item.done ? 'done' : (item.skipped ? 'skipped' : '');
+            return `<div class="hint-unit ${stateClass}" id="py-${i}" onclick="jumpTo(${i})">${innerHtml}</div>`;
         }).join('');
         
         autoJump();
     }
 
     function jumpTo(idx) {
+        // 🟢 绿色的绝对不能点
         if(practiceChars[idx].isP || practiceChars[idx].done) return; 
 
-        document.querySelectorAll('.hint-unit').forEach((el, i) => el.classList.toggle('active', i === idx));
+        // 如果是之前跳过的橙色字，清空跳过状态，让它可以重新书写
+        if (practiceChars[idx].skipped) {
+            practiceChars[idx].skipped = false;
+        }
+
+        document.querySelectorAll('.hint-unit').forEach((el, i) => {
+            el.classList.toggle('active', i === idx);
+            if (i === idx) el.classList.remove('skipped'); // 确保当前激活的不再是橙色
+        });
+        
         document.getElementById('draw-target').innerHTML = `<div id="hz-box" class="hanzi-box"></div>`;
         
         let boxSize = window.innerWidth <= 768 ? 200 : 260;
         let isChallenge = currentMode === 'challenge';
         
-        // 🟢 核心修复点 2：明确设定 outlineColor 底纹颜色
         hzWriter = HanziWriter.create('hz-box', practiceChars[idx].char, {
             width: boxSize, height: boxSize, padding: 15, 
             showOutline: false, 
             showCharacter: false, 
             strokeColor: '#1e293b', 
             drawingColor: '#3b82f6',
-            outlineColor: '#cbd5e1' // 灰色底纹，专门用于提示
+            outlineColor: '#cbd5e1' 
         });
 
         let charHasMistake = false;
@@ -473,35 +507,34 @@
                 
                 practiceChars[idx].done = true;
                 let pyEl = document.getElementById(`py-${idx}`);
+                pyEl.classList.remove('active');
                 pyEl.classList.add('done');
                 
-                pyEl.innerHTML = `<div style="font-size:14px; line-height:1; opacity:0.8;">${practiceChars[idx].pinyin}</div>
-                                  <div style="font-size:32px; font-weight:900; line-height:1.2; margin-top:2px;">${practiceChars[idx].char}</div>`;
+                // 🟢 挑战模式：写完后不显示汉字
+                if (currentMode === 'challenge') {
+                    pyEl.innerHTML = `<div style="font-size:26px; line-height:1.2; padding-top:6px;">${practiceChars[idx].pinyin}</div>`;
+                } else {
+                    pyEl.innerHTML = `<div style="font-size:14px; line-height:1; opacity:0.8;">${practiceChars[idx].pinyin}</div>
+                                      <div style="font-size:32px; font-weight:900; line-height:1.2; margin-top:2px;">${practiceChars[idx].char}</div>`;
+                }
                 
                 setTimeout(autoJump, 600);
             }
         });
 
         let peekBtn = document.getElementById('peek-btn');
-        let skipBtn = document.getElementById('skip-char-btn');
-
         if (!isChallenge) {
-            // 只有需要写字且非挑战模式时，才显示辅助按钮
-            peekBtn.style.display = 'block';
-            skipBtn.style.display = 'block';
-
-            // 🟢 核心修复点 3：改用 showOutline 和 hideOutline
             const showHints = (e) => {
                 e.preventDefault(); 
                 peekBtn.style.transform = 'translateY(5px)'; 
                 peekBtn.style.boxShadow = '0 0 0 transparent'; 
-                hzWriter.showOutline(); // 显示灰色底纹，不遮挡已写笔画！
+                hzWriter.showOutline(); 
             };
             const hideHints = (e) => {
                 e.preventDefault(); 
                 peekBtn.style.transform = ''; 
                 peekBtn.style.boxShadow = ''; 
-                hzWriter.hideOutline(); // 隐藏灰色底纹
+                hzWriter.hideOutline(); 
             };
             
             peekBtn.onmousedown = showHints;
@@ -510,21 +543,28 @@
             peekBtn.ontouchstart = showHints;
             peekBtn.ontouchend = hideHints;
             peekBtn.ontouchcancel = hideHints;
-        } else {
-            peekBtn.style.display = 'none';
-            skipBtn.style.display = 'none';
         }
     }
 
+    // 🟢 重新设计的跳过逻辑
     function skipCurrentChar() {
-        let idx = practiceChars.findIndex(i => !i.done);
+        let idx = practiceChars.findIndex(i => !i.done && !i.skipped);
         if(idx !== -1) {
-            practiceChars[idx].done = true;
             let pyEl = document.getElementById(`py-${idx}`);
-            pyEl.classList.add('done');
-            
-            pyEl.innerHTML = `<div style="font-size:14px; line-height:1; opacity:0.8;">${practiceChars[idx].pinyin}</div>
-                              <div style="font-size:32px; font-weight:900; line-height:1.2; margin-top:2px;">${practiceChars[idx].char}</div>`;
+            pyEl.classList.remove('active');
+
+            if (currentMode === 'practice') {
+                // 练习模式：太简单，直接标记完成（绿色）
+                practiceChars[idx].done = true;
+                pyEl.classList.add('done');
+                pyEl.innerHTML = `<div style="font-size:14px; line-height:1; opacity:0.8;">${practiceChars[idx].pinyin}</div>
+                                  <div style="font-size:32px; font-weight:900; line-height:1.2; margin-top:2px;">${practiceChars[idx].char}</div>`;
+            } else {
+                // 挑战模式：不会写，保留拼音标记为橙色
+                practiceChars[idx].skipped = true;
+                pyEl.classList.add('skipped');
+                pyEl.innerHTML = `<div style="font-size:26px; line-height:1.2; padding-top:6px;">${practiceChars[idx].pinyin}</div>`;
+            }
             
             autoJump(); 
         }
@@ -539,7 +579,7 @@
     }
 
     function autoJump() {
-        let next = practiceChars.findIndex(i => !i.done);
+        let next = practiceChars.findIndex(i => !i.done && !i.skipped);
         if(next !== -1) {
             jumpTo(next);
         } else {
@@ -580,11 +620,23 @@
         }
     }
 
+    // 🟢 终极核算：提交时只要没写完或者写错的都算错
     function finish() {
         practiceList.forEach(q => {
-            if (!q.isCompleted) {
-                q.isWrong = true;
-                if (curSub !== 'English') {
+            if (curSub !== 'English') {
+                if (q.charsData) {
+                    q.charsData.forEach(item => {
+                        // 只要不是标点，且没被正确写完（跳过或根本没点到），统统算错
+                        if (!item.isP && !item.done) {
+                            q.isWrong = true;
+                            if (!q.mistakeChars.find(mc => mc.char === item.char)) {
+                                q.mistakeChars.push({ char: item.char, pinyin: item.pinyin });
+                            }
+                        }
+                    });
+                } else {
+                    // 题都没点开，全错
+                    q.isWrong = true;
                     let word = q.Answer.trim();
                     let pinyins = q.Hint.trim().split(/\s+/);
                     let pIdx = 0;
@@ -597,6 +649,8 @@
                         }
                     }
                 }
+            } else {
+                if (!q.isCompleted) q.isWrong = true;
             }
         });
 
@@ -681,27 +735,44 @@
 
     function showChallengeResult() {
         let accuracy = 0;
+        let correctChars = [];
+        let wrongChars = [];
 
-        if (curSub === 'English') {
-            let totalItems = practiceList.length;
-            let wrongItems = practiceList.filter(q => q.isWrong).length;
-            accuracy = totalItems > 0 ? (totalItems - wrongItems) / totalItems : 0;
-        } else {
-            let totalChars = 0;
-            let wrongChars = 0;
-            practiceList.forEach(q => {
-                totalChars += q.Answer.replace(/[，。！？、：；（）《》“”" "]/g, '').length;
-                let uniqueMistakes = new Set(q.mistakeChars.map(mc => mc.char));
-                wrongChars += uniqueMistakes.size;
-            });
-            accuracy = totalChars > 0 ? Math.max(0, (totalChars - wrongChars) / totalChars) : 0;
-        }
+        // 🟢 收集对错字进行总结显示
+        practiceList.forEach(q => {
+            if (curSub !== 'English') {
+                if (q.charsData) {
+                    q.charsData.forEach(item => {
+                        if (!item.isP) {
+                            let isMistake = q.mistakeChars.find(mc => mc.char === item.char);
+                            if (item.done && !isMistake) correctChars.push(item.char);
+                            else wrongChars.push(item.char);
+                        }
+                    });
+                } else {
+                    let word = q.Answer.trim();
+                    for (let i = 0; i < word.length; i++) {
+                        if (!/[，。！？、：；（）《》“”" "]/u.test(word[i])) wrongChars.push(word[i]);
+                    }
+                }
+            } else {
+                if (q.isWrong || !q.isCompleted) wrongChars.push(q.Answer);
+                else correctChars.push(q.Answer);
+            }
+        });
+
+        // 整理字库去重，只要错一次就算错
+        correctChars = [...new Set(correctChars)];
+        wrongChars = [...new Set(wrongChars)];
+        correctChars = correctChars.filter(c => !wrongChars.includes(c));
+
+        let totalChars = correctChars.length + wrongChars.length;
+        accuracy = totalChars > 0 ? correctChars.length / totalChars : 0;
 
         let emoji, stars, message, color;
 
         if (accuracy >= 0.9) {
-            emoji = '🤩'; 
-            stars = '⭐⭐⭐⭐⭐'; 
+            emoji = '🤩'; stars = '⭐⭐⭐⭐⭐'; 
             message = '太棒啦！几乎全对！<br><span style="color:#f59e0b; font-size:24px;">3秒后进入奖励游戏...</span>'; 
             color = '#f59e0b'; 
             confetti({ particleCount: 300, spread: 100, origin: { y: 0.5 }, colors: ['#fbbf24', '#f59e0b', '#fb923c'] });
@@ -713,21 +784,12 @@
             }, 3000);
             
         } else if (accuracy >= 0.7) {
-            emoji = '😊'; 
-            stars = '⭐⭐⭐⭐'; 
-            message = '很棒哦！只有一点点错！'; 
-            color = '#38bdf8'; 
+            emoji = '😊'; stars = '⭐⭐⭐⭐'; message = '很棒哦！只有一点点错！'; color = '#38bdf8'; 
             confetti({ particleCount: 150, spread: 80, origin: { y: 0.5 }, colors: ['#38bdf8', '#bae6fd'] });
         } else if (accuracy >= 0.5) {
-            emoji = '✊'; 
-            stars = '⭐⭐⭐'; 
-            message = '不错哦！还要继续努力！'; 
-            color = '#a855f7'; 
+            emoji = '✊'; stars = '⭐⭐⭐'; message = '不错哦！还要继续努力！'; color = '#a855f7'; 
         } else {
-            emoji = '💪'; 
-            stars = '⭐⭐'; 
-            message = '加油！多写几次就记住啦！'; 
-            color = '#10b981'; 
+            emoji = '💪'; stars = '⭐⭐'; message = '加油！多写几次就记住啦！'; color = '#10b981'; 
         }
 
         let html = `
@@ -735,10 +797,20 @@
                 <h2 style="font-size:24px; color:#94a3b8; margin-bottom:15px; font-weight:900;">🏅 挑战结果</h2>
                 <h1 style="font-size:90px; text-shadow:none; margin-top:0; margin-bottom:10px;">${emoji}</h1>
                 <h2 style="font-size:46px; color:${color}; margin-top:0; font-weight:900;">${stars}</h2>
-                <p style="font-size:24px; color:#475569; margin:30px 0 40px 0; font-weight:800; line-height:1.5;">
-                    ${message}
-                </p>
-                <div class="controls-row" style="justify-content: center; margin-top: 40px; height: auto; display:flex;">
+                <p style="font-size:24px; color:#475569; margin:15px 0 20px 0; font-weight:800; line-height:1.5;">${message}</p>
+                
+                <div style="margin-top: 25px; text-align: left; background: #f8fafc; padding: 20px; border-radius: 20px; border: 2px solid #e2e8f0; width: 100%; max-width: 500px; margin-left: auto; margin-right: auto;">
+                    <div style="margin-bottom: 15px; display:flex; align-items:flex-start;">
+                        <span style="flex:none; padding:4px 10px; background:#dcfce7; color:#059669; border-radius:12px; font-weight:bold; margin-right:10px;">✅ 掌握得很好:</span>
+                        <span style="font-size:20px; color:#10b981; font-weight:900; line-height:1.5;">${correctChars.length > 0 ? correctChars.join(', ') : '无'}</span>
+                    </div>
+                    <div style="display:flex; align-items:flex-start;">
+                        <span style="flex:none; padding:4px 10px; background:#fee2e2; color:#e11d48; border-radius:12px; font-weight:bold; margin-right:10px;">❌ 还需要练习:</span>
+                        <span style="font-size:20px; color:#f43f5e; font-weight:900; line-height:1.5;">${wrongChars.length > 0 ? wrongChars.join(', ') : '无'}</span>
+                    </div>
+                </div>
+
+                <div class="controls-row" style="justify-content: center; margin-top: 30px; height: auto; display:flex;">
                     <button class="btn-action btn-quit" style="width: 220px; height: 65px; flex: none;" onclick="location.reload()">结束挑战 🏠</button>
                 </div>
             </div>
