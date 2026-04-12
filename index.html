@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-M04YCD1PQK"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-M04YCD1PQK');
-</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Spelling Hub</title>
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-M04YCD1PQK"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-M04YCD1PQK');
+    </script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -22,10 +22,8 @@
         
         body { background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%); margin: 0; padding: 15px; color: var(--text-main); display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100dvh; overflow: hidden; }
         
-        /* 核心布局优化：固定高度，防溢出 */
         .container { width: 100%; max-width: 750px; background: #ffffff; padding: 30px; border-radius: 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); text-align: center; margin: auto; position: relative; border: 4px solid #ffffff; display: flex; flex-direction: column; max-height: 96dvh; }
         
-        /* Screen 改为 Flex，允许内部列表自适应拉伸和滚动 */
         .screen { display: none; flex: 1; flex-direction: column; width: 100%; overflow: hidden; animation: bounceIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
         #setup-screen, #finish-screen { justify-content: center; }
         #finish-screen { overflow-y: auto; }
@@ -44,7 +42,6 @@
         .btn-sub-高华 { background: #9333ea; border-color: #9333ea; color: white; box-shadow: 0 6px 0 #7e22ce; }
         .btn-sub-高华.active { transform: translateY(6px); box-shadow: 0 0 0 transparent; filter: brightness(0.95); }
 
-        /* 题库列表区弹性填充与自适应滚动 */
         .checkbox-grid { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-bottom: 20px; padding: 10px; flex: 1; overflow-y: auto; align-content: flex-start; }
         .checkbox-label { padding: 14px 22px; border-radius: 30px; border: 3px solid #e2e8f0; background: white; cursor: pointer; font-weight: 800; font-size: 18px; color: var(--text-muted); transition: all 0.2s; user-select: none; box-shadow: 0 4px 0 #f1f5f9; height: fit-content; }
         .checkbox-label input { display: none; }
@@ -54,7 +51,6 @@
 
         .sem-toggle.active { border-color: #3b82f6 !important; background: #eff6ff !important; color: #1d4ed8 !important; transform: translateY(4px); box-shadow: 0 0 0 transparent !important; }
 
-        /* 底部固定操作栏 */
         .action-panel { display: flex; gap: 15px; margin-top: 5px; height: 140px; width: 100%; flex: none; }
         .btn-square { flex: 0 0 140px; border-radius: 35px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; background: #f1f5f9; color: #64748b; border: 3px solid #e2e8f0; box-shadow: 0 6px 0 #cbd5e1; font-weight: 900; cursor: pointer; transition: 0.15s; }
         .btn-square:active { transform: translateY(6px); box-shadow: 0 0 0 transparent; }
@@ -64,12 +60,11 @@
         .btn-review-stacked { background: #f59e0b; box-shadow: 0 6px 0 #d97706; }
         .btn-practice-stacked { background: #10b981; box-shadow: 0 6px 0 #059669; }
 
-        /* 练习界面弹性布局 */
         .progress-container { width: 100%; background: #f1f5f9; height: 16px; border-radius: 10px; margin-bottom: 25px; overflow: hidden; border: 2px solid #e2e8f0; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); flex: none; }
         .progress-bar { height: 100%; background: linear-gradient(90deg, #34d399, #10b981); width: 0%; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 10px; }
         .progress-text { font-size: 18px; color: #94a3b8; margin-bottom: 20px; font-weight: 900; flex: none; }
-        .hint-display { font-size: 32px; font-weight: bold; color: #334155; margin-bottom: 20px; min-height: 90px; display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; align-content: center; flex: none; }
         
+        .hint-display { font-size: 32px; font-weight: bold; color: #334155; margin-bottom: 20px; min-height: 90px; display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; align-content: center; flex: none; }
         .hint-unit { cursor: pointer; padding: 8px 16px; border-radius: 18px; border: 3px solid #e2e8f0; background: #fff; min-width: 60px; text-align: center; font-size: 26px; transition: 0.2s; box-shadow: 0 4px 0 #f1f5f9; }
         .hint-unit:active { transform: translateY(4px); box-shadow: 0 0 0 transparent; }
         .hint-unit.active { color: #ea580c; background: #fff7ed; border-color: #fb923c; transform: scale(1.1); box-shadow: 0 6px 0 #f97316; z-index: 2; }
@@ -78,6 +73,14 @@
         .practice-main { display: flex; flex-direction: column; flex: 1; width: 100%; min-height: 0; }
         .practice-area { background: #f8fafc; padding: 25px 15px; border-radius: 35px; border: 4px dashed #cbd5e1; margin-bottom: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; position: relative; overflow: hidden; min-height: 250px;}
         .hanzi-box { width: 260px; height: 260px; border: 4px solid #94a3b8; border-radius: 25px; background: white; box-shadow: inset 0 0 20px rgba(0,0,0,0.03); }
+
+        /* 🟢 新增：辅助按钮区域 (看一下 & 跳过) */
+        .helper-row { display: flex; gap: 15px; margin-top: 20px; justify-content: center; width: 100%; }
+        .btn-helper { font-size: 16px; padding: 12px 24px; border-radius: 25px; font-weight: 900; cursor: pointer; transition: 0.15s; outline: none; user-select: none; -webkit-touch-callout: none; display: none; }
+        
+        #peek-btn { background: #fef08a; color: #a16207; border: 3px solid #fde047; box-shadow: 0 5px 0 #facc15; }
+        #skip-char-btn { background: #f1f5f9; color: #64748b; border: 3px solid #e2e8f0; box-shadow: 0 5px 0 #cbd5e1; }
+        #skip-char-btn:active { transform: translateY(5px); box-shadow: 0 0 0 transparent; }
 
         .controls-row { display: flex; gap: 16px; width: 100%; height: 75px; flex: none; }
         .btn-action { border-radius: 22px; border: none; font-weight: 900; font-size: 22px; cursor: pointer; transition: 0.15s; display: flex; align-items: center; justify-content: center; outline: none; }
@@ -97,10 +100,6 @@
         .letter-btn.used { opacity: 0; pointer-events: none; }
         input.spell-input { font-size: 38px; padding: 15px; width: 100%; max-width: 380px; border: 4px solid #e2e8f0; border-radius: 22px; text-align: center; color: #0f172a; font-weight: 900; letter-spacing: 4px; }
 
-        #skip-char-btn { font-size: 16px; padding: 8px 20px; border-radius: 20px; background: #f1f5f9; color: #94a3b8; border: 2px solid #e2e8f0; margin-top: 15px; cursor: pointer; transition: 0.2s; font-weight: 800; }
-        #skip-char-btn:active { transform: scale(0.95); }
-
-        /* 📱 手机竖屏适配 */
         @media (max-width: 768px) {
             body { padding: 10px; }
             .container { padding: 25px 15px; border-radius: 30px; max-height: 98dvh;}
@@ -118,36 +117,31 @@
             .hint-unit { font-size: 22px; padding: 6px 12px; }
             .controls-row { height: 60px; gap: 10px; }
             .btn-action { font-size: 18px; border-radius: 18px; }
+            .btn-helper { font-size: 15px; padding: 10px 18px; }
             .letter-btn { width: 45px; height: 55px; font-size: 26px; }
             input.spell-input { font-size: 28px; padding: 10px; border-width: 3px; }
             #finish-screen h1 { font-size: 50px !important; }
             #finish-screen h2 { font-size: 28px !important; }
             #finish-screen p { font-size: 18px !important; }
         }
+
         /* 💻 平板横屏专属适配：高度利用，右侧操作栏优化（上1下2布局） */
         @media (orientation: landscape) and (min-width: 768px) {
             .container { max-width: 1000px; padding: 25px 40px; height: 95dvh; }
             .practice-main { flex-direction: row; align-items: flex-start; gap: 30px; }
             .practice-area { margin-bottom: 0; height: 100%; min-height: 300px; flex: 1; }
             
-            /* 采用 Grid 网格布局，完美实现“上1下2” */
             .controls-row { 
                 display: grid; 
-                grid-template-columns: 1fr 1fr; /* 底部均分两列 */
-                width: 320px; /* 加宽右侧整个操作区，告别细长 */
+                grid-template-columns: 1fr 1fr; 
+                width: 320px; 
                 height: auto; 
                 margin-top: 0; 
-                gap: 18px; /* 增加按钮之间的空隙 */
+                gap: 18px; 
                 flex: none;
             }
-            
-            /* 统一加厚所有按钮，显得更方正、厚实好按 */
             .btn-action { height: 85px; width: 100%; border-radius: 25px; }
-            
-            /* 结束按钮：跨度设置为 1到3，让它独自霸占第一整行 */
             .btn-quit { grid-column: 1 / 3; font-size: 24px; }
-            
-            /* 下面的导航按钮：字号稍微调小，完美放进半格空间 */
             .btn-nav { font-size: 18px; padding: 0 5px; }
         }
     </style>
@@ -191,11 +185,15 @@
             <div id="work-area" class="practice-area">
                 <div id="thumb-up">👍</div>
                 <div id="draw-target"></div>
-                <button id="skip-char-btn" style="display:none;" onclick="skipCurrentChar()">太简单，跳过 ⏭️</button>
+                
+                <div class="helper-row">
+                    <button id="peek-btn" class="btn-helper" oncontextmenu="return false;">👀 看一下 (按住)</button>
+                    <button id="skip-char-btn" class="btn-helper" onclick="skipCurrentChar()">太简单，跳过 ⏭️</button>
+                </div>
             </div>
             
             <div class="controls-row">
-                <button class="btn-action btn-quit" onclick="location.reload()">结束</button>
+                <button class="btn-action btn-quit" onclick="location.reload()">结束测试 🏠</button>
                 <button id="prev-btn" class="btn-action btn-nav" onclick="moveQuestion(-1)">⬅️ 上一个</button>
                 <button id="next-btn" class="btn-action btn-nav" onclick="moveQuestion(1)">下一个 ➡️</button>
             </div>
@@ -405,11 +403,14 @@
         if(curSub === 'English') setupEnglish(q); else setupChinese(q);
     }
 
+    // 🟢 模式显示控制
     function setupChinese(q) {
         if (currentMode === 'challenge') {
             document.getElementById('skip-char-btn').style.display = 'none';
+            document.getElementById('peek-btn').style.display = 'none';
         } else {
             document.getElementById('skip-char-btn').style.display = 'block'; 
+            document.getElementById('peek-btn').style.display = 'block'; 
         }
 
         if (!q.charsData) {
@@ -440,7 +441,7 @@
         autoJump();
     }
 
-    // 🔴 核心重写：受控闪现逻辑
+    // 🟢 核心改写：引入“看一下”按钮，撤销自动闪现
     function jumpTo(idx) {
         if(practiceChars[idx].isP || practiceChars[idx].done) return; 
 
@@ -450,53 +451,67 @@
         let boxSize = window.innerWidth <= 768 ? 200 : 260;
         let isChallenge = currentMode === 'challenge';
         
-        // 彻底禁止 HanziWriter 自己乱闪，把控制权拿过来
         hzWriter = HanziWriter.create('hz-box', practiceChars[idx].char, {
             width: boxSize, height: boxSize, padding: 15, 
             showOutline: false, 
-            showCharacter: false, // 默认隐藏！
+            showCharacter: false, // 永远默认隐藏
             strokeColor: '#1e293b', drawingColor: '#3b82f6'
         });
 
         let charHasMistake = false;
 
-        function startQuiz() {
-            hzWriter.quiz({ 
-                onMistake: () => { 
-                    let q = practiceList[curIdx];
-                    q.isWrong = true; 
-                    let currentChar = practiceChars[idx].char;
-                    if (!q.mistakeChars.find(c => c.char === currentChar)) {
-                        q.mistakeChars.push({ char: currentChar, pinyin: practiceChars[idx].pinyin });
-                    }
-                    charHasMistake = true;
-                },
-                onComplete: () => {
-                    showThumb();
-                    if (!charHasMistake && !practiceChars[idx].done) { totalCorrectCount++; }
-                    
-                    practiceChars[idx].done = true;
-                    let pyEl = document.getElementById(`py-${idx}`);
-                    pyEl.classList.add('done');
-                    
-                    pyEl.innerHTML = `<div style="font-size:14px; line-height:1; opacity:0.8;">${practiceChars[idx].pinyin}</div>
-                                      <div style="font-size:32px; font-weight:900; line-height:1.2; margin-top:2px;">${practiceChars[idx].char}</div>`;
-                    
-                    setTimeout(autoJump, 600);
+        hzWriter.quiz({ 
+            onMistake: () => { 
+                let q = practiceList[curIdx];
+                q.isWrong = true; 
+                let currentChar = practiceChars[idx].char;
+                if (!q.mistakeChars.find(c => c.char === currentChar)) {
+                    q.mistakeChars.push({ char: currentChar, pinyin: practiceChars[idx].pinyin });
                 }
-            });
-        }
+                charHasMistake = true;
+            },
+            onComplete: () => {
+                showThumb();
+                if (!charHasMistake && !practiceChars[idx].done) { totalCorrectCount++; }
+                
+                practiceChars[idx].done = true;
+                let pyEl = document.getElementById(`py-${idx}`);
+                pyEl.classList.add('done');
+                
+                pyEl.innerHTML = `<div style="font-size:14px; line-height:1; opacity:0.8;">${practiceChars[idx].pinyin}</div>
+                                  <div style="font-size:32px; font-weight:900; line-height:1.2; margin-top:2px;">${practiceChars[idx].char}</div>`;
+                
+                setTimeout(autoJump, 600);
+            }
+        });
 
+        // 给“看一下”按钮绑定按下和松开的事件
+        let peekBtn = document.getElementById('peek-btn');
         if (!isChallenge) {
-            // 练习模式：刻意且优雅地闪现 0.5 秒钟
-            hzWriter.showCharacter();
-            setTimeout(() => {
-                hzWriter.hideCharacter();
-                startQuiz();
-            }, 500); 
-        } else {
-            // 挑战模式：零闪现，直接开考！
-            startQuiz();
+            // 定义按下动作：视觉下陷 + 显示汉字
+            const showHints = (e) => {
+                e.preventDefault(); 
+                peekBtn.style.transform = 'translateY(5px)'; 
+                peekBtn.style.boxShadow = '0 0 0 transparent'; 
+                hzWriter.showCharacter(); 
+            };
+            // 定义松开动作：视觉回弹 + 隐藏汉字
+            const hideHints = (e) => {
+                e.preventDefault(); 
+                peekBtn.style.transform = ''; 
+                peekBtn.style.boxShadow = ''; 
+                hzWriter.hideCharacter(); 
+            };
+            
+            // 绑定鼠标事件 (电脑端)
+            peekBtn.onmousedown = showHints;
+            peekBtn.onmouseup = hideHints;
+            peekBtn.onmouseleave = hideHints; // 鼠标移走也自动松开
+
+            // 绑定触摸事件 (iPad/手机端)
+            peekBtn.ontouchstart = showHints;
+            peekBtn.ontouchend = hideHints;
+            peekBtn.ontouchcancel = hideHints;
         }
     }
 
@@ -533,6 +548,7 @@
 
     function setupEnglish(q) {
         document.getElementById('skip-char-btn').style.display = 'none'; 
+        document.getElementById('peek-btn').style.display = 'none'; 
         const answer = q.Answer.toLowerCase().trim();
         document.getElementById('hint-area').innerHTML = `<div style="font-size:28px; color:#64748b; font-weight:800;">${q.Hint}</div>`;
         let letters = answer.split('');
@@ -652,7 +668,7 @@
         }
 
         html += `
-                <div class="controls-row" style="justify-content: center; margin-top: ${isAllRight ? '40px' : '20px'}; height: auto;">
+                <div class="controls-row" style="justify-content: center; margin-top: ${isAllRight ? '40px' : '20px'}; height: auto; display:flex;">
                     <button class="btn-action btn-quit" style="width: 200px; height: 65px; flex: none;" onclick="location.reload()">结束</button>
                 </div>
             </div>
@@ -721,7 +737,7 @@
                 <p style="font-size:24px; color:#475569; margin:30px 0 40px 0; font-weight:800; line-height:1.5;">
                     ${message}
                 </p>
-                <div class="controls-row" style="justify-content: center; margin-top: 40px; height: auto;">
+                <div class="controls-row" style="justify-content: center; margin-top: 40px; height: auto; display:flex;">
                     <button class="btn-action btn-quit" style="width: 220px; height: 65px; flex: none;" onclick="location.reload()">结束挑战 🏠</button>
                 </div>
             </div>
@@ -744,7 +760,6 @@
         renderQuestion();
     }
 
-    // 🔴 UI：改写为 Flex 布局适应机制
     function showScreen(id) { 
         document.querySelectorAll('.screen').forEach(s => s.style.display='none'); 
         document.getElementById(id).style.display='flex'; 
