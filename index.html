@@ -74,7 +74,6 @@
         .practice-area { background: #f8fafc; padding: 25px 15px; border-radius: 35px; border: 4px dashed #cbd5e1; margin-bottom: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; position: relative; overflow: hidden; min-height: 250px;}
         .hanzi-box { width: 260px; height: 260px; border: 4px solid #94a3b8; border-radius: 25px; background: white; box-shadow: inset 0 0 20px rgba(0,0,0,0.03); }
 
-        /* 🟢 新增：辅助按钮区域 (看一下 & 跳过) */
         .helper-row { display: flex; gap: 15px; margin-top: 20px; justify-content: center; width: 100%; }
         .btn-helper { font-size: 16px; padding: 12px 24px; border-radius: 25px; font-weight: 900; cursor: pointer; transition: 0.15s; outline: none; user-select: none; -webkit-touch-callout: none; display: none; }
         
@@ -125,13 +124,12 @@
             #finish-screen p { font-size: 18px !important; }
         }
 
-/* 💻 平板横屏专属适配：高度利用，右侧操作栏优化（上1下2布局） */
+        /* 💻 平板横屏专属适配：高度利用，右侧操作栏优化（上1下2布局） */
         @media (orientation: landscape) and (min-width: 768px) {
             .container { max-width: 1000px; padding: 25px 40px; height: 95dvh; }
             .practice-main { flex-direction: row; align-items: flex-start; gap: 30px; }
             .practice-area { margin-bottom: 0; height: 100%; min-height: 300px; flex: 1; }
             
-            /* 🟢 核心修复：前面加上 .practice-main，确保绝对不影响结束界面的按钮 */
             .practice-main .controls-row { 
                 display: grid; 
                 grid-template-columns: 1fr 1fr; 
@@ -145,7 +143,6 @@
             .practice-main .btn-quit { grid-column: 1 / 3; font-size: 24px; }
             .practice-main .btn-nav { font-size: 18px; padding: 0 5px; }
         }
-        
     </style>
 </head>
 <body>
@@ -405,15 +402,11 @@
         if(curSub === 'English') setupEnglish(q); else setupChinese(q);
     }
 
-    // 🟢 模式显示控制
+    // 🟢 核心修复点 1：每次切题时强制隐藏按钮、清空画板
     function setupChinese(q) {
-        if (currentMode === 'challenge') {
-            document.getElementById('skip-char-btn').style.display = 'none';
-            document.getElementById('peek-btn').style.display = 'none';
-        } else {
-            document.getElementById('skip-char-btn').style.display = 'block'; 
-            document.getElementById('peek-btn').style.display = 'block'; 
-        }
+        document.getElementById('skip-char-btn').style.display = 'none'; 
+        document.getElementById('peek-btn').style.display = 'none'; 
+        document.getElementById('draw-target').innerHTML = '';
 
         if (!q.charsData) {
             const word = q.Answer.trim();
@@ -443,7 +436,6 @@
         autoJump();
     }
 
-    // 🟢 核心改写：引入“看一下”按钮，撤销自动闪现
     function jumpTo(idx) {
         if(practiceChars[idx].isP || practiceChars[idx].done) return; 
 
@@ -453,11 +445,14 @@
         let boxSize = window.innerWidth <= 768 ? 200 : 260;
         let isChallenge = currentMode === 'challenge';
         
+        // 🟢 核心修复点 2：明确设定 outlineColor 底纹颜色
         hzWriter = HanziWriter.create('hz-box', practiceChars[idx].char, {
             width: boxSize, height: boxSize, padding: 15, 
             showOutline: false, 
-            showCharacter: false, // 永远默认隐藏
-            strokeColor: '#1e293b', drawingColor: '#3b82f6'
+            showCharacter: false, 
+            strokeColor: '#1e293b', 
+            drawingColor: '#3b82f6',
+            outlineColor: '#cbd5e1' // 灰色底纹，专门用于提示
         });
 
         let charHasMistake = false;
@@ -487,33 +482,37 @@
             }
         });
 
-        // 给“看一下”按钮绑定按下和松开的事件
         let peekBtn = document.getElementById('peek-btn');
+        let skipBtn = document.getElementById('skip-char-btn');
+
         if (!isChallenge) {
-            // 定义按下动作：视觉下陷 + 显示汉字
+            // 只有需要写字且非挑战模式时，才显示辅助按钮
+            peekBtn.style.display = 'block';
+            skipBtn.style.display = 'block';
+
+            // 🟢 核心修复点 3：改用 showOutline 和 hideOutline
             const showHints = (e) => {
                 e.preventDefault(); 
                 peekBtn.style.transform = 'translateY(5px)'; 
                 peekBtn.style.boxShadow = '0 0 0 transparent'; 
-                hzWriter.showCharacter(); 
+                hzWriter.showOutline(); // 显示灰色底纹，不遮挡已写笔画！
             };
-            // 定义松开动作：视觉回弹 + 隐藏汉字
             const hideHints = (e) => {
                 e.preventDefault(); 
                 peekBtn.style.transform = ''; 
                 peekBtn.style.boxShadow = ''; 
-                hzWriter.hideCharacter(); 
+                hzWriter.hideOutline(); // 隐藏灰色底纹
             };
             
-            // 绑定鼠标事件 (电脑端)
             peekBtn.onmousedown = showHints;
             peekBtn.onmouseup = hideHints;
-            peekBtn.onmouseleave = hideHints; // 鼠标移走也自动松开
-
-            // 绑定触摸事件 (iPad/手机端)
+            peekBtn.onmouseleave = hideHints; 
             peekBtn.ontouchstart = showHints;
             peekBtn.ontouchend = hideHints;
             peekBtn.ontouchcancel = hideHints;
+        } else {
+            peekBtn.style.display = 'none';
+            skipBtn.style.display = 'none';
         }
     }
 
