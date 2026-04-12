@@ -125,13 +125,14 @@
             #finish-screen p { font-size: 18px !important; }
         }
 
-        /* 💻 平板横屏专属适配：高度利用，右侧操作栏优化（上1下2布局） */
+/* 💻 平板横屏专属适配：高度利用，右侧操作栏优化（上1下2布局） */
         @media (orientation: landscape) and (min-width: 768px) {
             .container { max-width: 1000px; padding: 25px 40px; height: 95dvh; }
             .practice-main { flex-direction: row; align-items: flex-start; gap: 30px; }
             .practice-area { margin-bottom: 0; height: 100%; min-height: 300px; flex: 1; }
             
-            .controls-row { 
+            /* 🟢 核心修复：前面加上 .practice-main，确保绝对不影响结束界面的按钮 */
+            .practice-main .controls-row { 
                 display: grid; 
                 grid-template-columns: 1fr 1fr; 
                 width: 320px; 
@@ -140,10 +141,11 @@
                 gap: 18px; 
                 flex: none;
             }
-            .btn-action { height: 85px; width: 100%; border-radius: 25px; }
-            .btn-quit { grid-column: 1 / 3; font-size: 24px; }
-            .btn-nav { font-size: 18px; padding: 0 5px; }
+            .practice-main .btn-action { height: 85px; width: 100%; border-radius: 25px; }
+            .practice-main .btn-quit { grid-column: 1 / 3; font-size: 24px; }
+            .practice-main .btn-nav { font-size: 18px; padding: 0 5px; }
         }
+        
     </style>
 </head>
 <body>
