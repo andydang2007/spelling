@@ -11,30 +11,33 @@
         :root { --text-main: #1e293b; --text-muted: #64748b; }
         * { box-sizing: border-box; font-family: 'Comic Sans MS', "Chalkboard SE", "Nunito", -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        body { background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%); margin: 0; padding: 20px; color: var(--text-main); display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100dvh; }
+        body { background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%); margin: 0; padding: 15px; color: var(--text-main); display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100dvh; overflow: hidden; }
         
-        .container { width: 100%; max-width: 700px; background: #ffffff; padding: 40px 30px; border-radius: 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); text-align: center; margin: auto; position: relative; border: 4px solid #ffffff; }
-        .screen { display: none; width: 100%; animation: bounceIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+        /* 核心布局优化：固定高度，防溢出 */
+        .container { width: 100%; max-width: 750px; background: #ffffff; padding: 30px; border-radius: 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); text-align: center; margin: auto; position: relative; border: 4px solid #ffffff; display: flex; flex-direction: column; max-height: 96dvh; }
         
-        h1 { color: #3b82f6; margin-top: 0; font-size: 38px; margin-bottom: 30px; font-weight: 900; letter-spacing: 1px; text-shadow: 2px 2px 0px #dbeafe; }
+        /* Screen 改为 Flex，允许内部列表自适应拉伸和滚动 */
+        .screen { display: none; flex: 1; flex-direction: column; width: 100%; overflow: hidden; animation: bounceIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+        #setup-screen, #finish-screen { justify-content: center; }
+        #finish-screen { overflow-y: auto; }
+        
+        h1 { color: #3b82f6; margin-top: 0; font-size: 38px; margin-bottom: 25px; font-weight: 900; letter-spacing: 1px; text-shadow: 2px 2px 0px #dbeafe; flex: none; }
 
-        .btn-group { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; }
+        .btn-group { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; flex: none; }
         .btn-choice { padding: 14px 28px; border-radius: 25px; border: 3px solid #e2e8f0; background: white; cursor: pointer; font-weight: 800; font-size: 22px; color: var(--text-muted); transition: 0.15s; min-width: 120px; box-shadow: 0 6px 0 #e2e8f0; outline: none; }
         .btn-choice:active { transform: translateY(6px); box-shadow: 0 0 0 transparent; }
-        
         .btn-choice.active { border-color: #3b82f6; background: #eff6ff; color: #1d4ed8; box-shadow: 0 6px 0 #93c5fd; }
         
         .btn-sub-English { background: #38bdf8; border-color: #38bdf8; color: white; box-shadow: 0 6px 0 #0284c7; }
         .btn-sub-English.active { transform: translateY(6px); box-shadow: 0 0 0 transparent; filter: brightness(0.95); }
-
         .btn-sub-华文 { background: #c084fc; border-color: #c084fc; color: white; box-shadow: 0 6px 0 #a855f7; }
         .btn-sub-华文.active { transform: translateY(6px); box-shadow: 0 0 0 transparent; filter: brightness(0.95); }
-
         .btn-sub-高华 { background: #9333ea; border-color: #9333ea; color: white; box-shadow: 0 6px 0 #7e22ce; }
         .btn-sub-高华.active { transform: translateY(6px); box-shadow: 0 0 0 transparent; filter: brightness(0.95); }
 
-        .checkbox-grid { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-bottom: 30px; max-height: 380px; overflow-y: auto; padding: 10px; }
-        .checkbox-label { padding: 14px 22px; border-radius: 30px; border: 3px solid #e2e8f0; background: white; cursor: pointer; font-weight: 800; font-size: 18px; color: var(--text-muted); transition: all 0.2s; user-select: none; box-shadow: 0 4px 0 #f1f5f9; }
+        /* 题库列表区弹性填充与自适应滚动 */
+        .checkbox-grid { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-bottom: 20px; padding: 10px; flex: 1; overflow-y: auto; align-content: flex-start; }
+        .checkbox-label { padding: 14px 22px; border-radius: 30px; border: 3px solid #e2e8f0; background: white; cursor: pointer; font-weight: 800; font-size: 18px; color: var(--text-muted); transition: all 0.2s; user-select: none; box-shadow: 0 4px 0 #f1f5f9; height: fit-content; }
         .checkbox-label input { display: none; }
         .checkbox-label:active { transform: translateY(4px); box-shadow: 0 0 0 transparent; }
         .checkbox-label.selected { border-color: #a855f7; background: #faf5ff; color: #7e22ce; box-shadow: 0 4px 0 #d8b4fe; }
@@ -42,39 +45,38 @@
 
         .sem-toggle.active { border-color: #3b82f6 !important; background: #eff6ff !important; color: #1d4ed8 !important; transform: translateY(4px); box-shadow: 0 0 0 transparent !important; }
 
-        .progress-container { width: 100%; background: #f1f5f9; height: 16px; border-radius: 10px; margin-bottom: 25px; overflow: hidden; border: 2px solid #e2e8f0; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); }
-        .progress-bar { height: 100%; background: linear-gradient(90deg, #34d399, #10b981); width: 0%; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 10px; }
-        .progress-text { font-size: 18px; color: #94a3b8; margin-bottom: 20px; font-weight: 900; }
+        /* 底部固定操作栏 */
+        .action-panel { display: flex; gap: 15px; margin-top: 5px; height: 140px; width: 100%; flex: none; }
+        .btn-square { flex: 0 0 140px; border-radius: 35px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; background: #f1f5f9; color: #64748b; border: 3px solid #e2e8f0; box-shadow: 0 6px 0 #cbd5e1; font-weight: 900; cursor: pointer; transition: 0.15s; }
+        .btn-square:active { transform: translateY(6px); box-shadow: 0 0 0 transparent; }
+        .btn-stacked-col { display: flex; flex-direction: column; gap: 15px; flex: 1; }
+        .btn-stacked { flex: 1; width: 100%; margin: 0; border-radius: 25px; font-size: 22px; font-weight: 900; border: none; cursor: pointer; transition: 0.15s; display: flex; align-items: center; justify-content: center; color: white; }
+        .btn-stacked:active { transform: translateY(6px); box-shadow: 0 0 0 transparent; }
+        .btn-review-stacked { background: #f59e0b; box-shadow: 0 6px 0 #d97706; }
+        .btn-practice-stacked { background: #10b981; box-shadow: 0 6px 0 #059669; }
 
-        .hint-display { font-size: 32px; font-weight: bold; color: #334155; margin-bottom: 20px; min-height: 90px; display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; align-content: center; }
+        /* 练习界面弹性布局 */
+        .progress-container { width: 100%; background: #f1f5f9; height: 16px; border-radius: 10px; margin-bottom: 25px; overflow: hidden; border: 2px solid #e2e8f0; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); flex: none; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, #34d399, #10b981); width: 0%; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 10px; }
+        .progress-text { font-size: 18px; color: #94a3b8; margin-bottom: 20px; font-weight: 900; flex: none; }
+        .hint-display { font-size: 32px; font-weight: bold; color: #334155; margin-bottom: 20px; min-height: 90px; display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; align-content: center; flex: none; }
+        
         .hint-unit { cursor: pointer; padding: 8px 16px; border-radius: 18px; border: 3px solid #e2e8f0; background: #fff; min-width: 60px; text-align: center; font-size: 26px; transition: 0.2s; box-shadow: 0 4px 0 #f1f5f9; }
         .hint-unit:active { transform: translateY(4px); box-shadow: 0 0 0 transparent; }
         .hint-unit.active { color: #ea580c; background: #fff7ed; border-color: #fb923c; transform: scale(1.1); box-shadow: 0 6px 0 #f97316; z-index: 2; }
         .hint-unit.done { color: #10b981; background: #ecfdf5; border-color: #6ee7b7; box-shadow: 0 0 0 transparent; transform: translateY(4px); cursor: default; }
 
-        .practice-area { background: #f8fafc; padding: 25px 15px; border-radius: 35px; border: 4px dashed #cbd5e1; margin-bottom: 25px; display: flex; flex-direction: column; align-items: center; min-height: 340px; justify-content: center; position: relative; }
+        .practice-main { display: flex; flex-direction: column; flex: 1; width: 100%; min-height: 0; }
+        .practice-area { background: #f8fafc; padding: 25px 15px; border-radius: 35px; border: 4px dashed #cbd5e1; margin-bottom: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; position: relative; overflow: hidden; min-height: 250px;}
         .hanzi-box { width: 260px; height: 260px; border: 4px solid #94a3b8; border-radius: 25px; background: white; box-shadow: inset 0 0 20px rgba(0,0,0,0.03); }
 
-        .controls-row { display: flex; gap: 16px; width: 100%; height: 75px; margin-top: 15px; }
+        .controls-row { display: flex; gap: 16px; width: 100%; height: 75px; flex: none; }
         .btn-action { border-radius: 22px; border: none; font-weight: 900; font-size: 22px; cursor: pointer; transition: 0.15s; display: flex; align-items: center; justify-content: center; outline: none; }
-        
         .btn-quit { flex: 1.2; background: #f1f5f9; color: #64748b; font-size: 18px; border: 3px solid #e2e8f0; box-shadow: 0 6px 0 #cbd5e1; } 
         .btn-quit:active { transform: translateY(6px); box-shadow: 0 0 0 transparent; }
-        
         .btn-nav { flex: 2; background: #38bdf8; color: white; box-shadow: 0 6px 0 #0284c7; } 
         .btn-nav:active:not(:disabled) { transform: translateY(6px); box-shadow: 0 0 0 transparent; }
         .btn-nav:disabled { background: #e2e8f0 !important; color: #94a3b8 !important; box-shadow: 0 6px 0 #cbd5e1 !important; transform: translateY(0) !important; cursor: not-allowed; opacity: 0.8; }
-
-        .action-panel { display: flex; gap: 15px; margin-top: 25px; height: 140px; width: 100%; }
-        .btn-square { flex: 0 0 140px; border-radius: 35px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; background: #f1f5f9; color: #64748b; border: 3px solid #e2e8f0; box-shadow: 0 6px 0 #cbd5e1; font-weight: 900; cursor: pointer; transition: 0.15s; }
-        .btn-square:active { transform: translateY(6px); box-shadow: 0 0 0 transparent; }
-        
-        .btn-stacked-col { display: flex; flex-direction: column; gap: 15px; flex: 1; }
-        .btn-stacked { flex: 1; width: 100%; margin: 0; border-radius: 25px; font-size: 22px; font-weight: 900; border: none; cursor: pointer; transition: 0.15s; display: flex; align-items: center; justify-content: center; color: white; }
-        .btn-stacked:active { transform: translateY(6px); box-shadow: 0 0 0 transparent; }
-        
-        .btn-review-stacked { background: #f59e0b; box-shadow: 0 6px 0 #d97706; }
-        .btn-practice-stacked { background: #10b981; box-shadow: 0 6px 0 #059669; }
 
         #thumb-up { position: absolute; font-size: 110px; display: none; z-index: 10; animation: thumbPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
         @keyframes thumbPop { 0% { transform: scale(0) rotate(-30deg); opacity: 0; } 50% { transform: scale(1.2) rotate(10deg); opacity: 1; } 100% { transform: scale(1) rotate(0deg); opacity: 0; } }
@@ -89,37 +91,48 @@
         #skip-char-btn { font-size: 16px; padding: 8px 20px; border-radius: 20px; background: #f1f5f9; color: #94a3b8; border: 2px solid #e2e8f0; margin-top: 15px; cursor: pointer; transition: 0.2s; font-weight: 800; }
         #skip-char-btn:active { transform: scale(0.95); }
 
+        /* 📱 手机竖屏适配 */
         @media (max-width: 768px) {
             body { padding: 10px; }
-            .container { padding: 25px 15px; border-radius: 30px; }
-            h1 { font-size: 28px; margin-bottom: 20px; }
+            .container { padding: 25px 15px; border-radius: 30px; max-height: 98dvh;}
+            h1 { font-size: 28px; margin-bottom: 15px; }
             .btn-choice { font-size: 18px; padding: 10px 20px; min-width: auto; }
             .checkbox-label { font-size: 16px; padding: 10px 16px; }
-            .action-panel { height: 120px; gap: 12px; }
+            .action-panel { height: 120px; gap: 12px; margin-top: 10px; }
             .btn-square { flex: 0 0 110px; border-radius: 25px; }
             .btn-square span:first-child { font-size: 28px !important; }
             .btn-square span:last-child { font-size: 18px !important; }
             .btn-stacked-col { gap: 12px; }
             .btn-stacked { border-radius: 20px; font-size: 18px; }
             .hanzi-box { width: 200px; height: 200px; border-radius: 18px; }
-            .practice-area { min-height: 280px; padding: 20px 10px; margin-bottom: 15px; }
             .hint-display { font-size: 24px; min-height: 70px; margin-bottom: 15px; }
             .hint-unit { font-size: 22px; padding: 6px 12px; }
-            .controls-row { height: 60px; margin-top: 10px; gap: 10px; }
+            .controls-row { height: 60px; gap: 10px; }
             .btn-action { font-size: 18px; border-radius: 18px; }
             .letter-btn { width: 45px; height: 55px; font-size: 26px; }
             input.spell-input { font-size: 28px; padding: 10px; border-width: 3px; }
             #finish-screen h1 { font-size: 50px !important; }
             #finish-screen h2 { font-size: 28px !important; }
             #finish-screen p { font-size: 18px !important; }
-            #finish-screen span { font-size: 32px !important; }
+        }
+
+        /* 💻 平板横屏专属适配：高度利用，按钮靠右置顶 */
+        @media (orientation: landscape) and (min-width: 768px) {
+            .container { max-width: 950px; padding: 25px 40px; height: 95dvh; }
+            .practice-main { flex-direction: row; align-items: flex-start; gap: 25px; }
+            .practice-area { margin-bottom: 0; height: 100%; min-height: 300px; }
+            .controls-row { 
+                flex-direction: column; width: 180px; height: auto; 
+                margin-top: 0; gap: 16px; justify-content: flex-start; /* 完美靠右偏上 */
+            }
+            .btn-action { height: 75px; width: 100%; }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div id="loading" class="screen" style="display:block; padding: 60px 0; font-size: 24px; font-weight: 900; color: #3b82f6;">
+    <div id="loading" class="screen" style="display:flex; justify-content:center; align-items:center; padding: 60px 0; font-size: 24px; font-weight: 900; color: #3b82f6;">
         🌟 魔法书正在加载... 
     </div>
 
@@ -131,7 +144,7 @@
 
     <div id="topic-screen" class="screen">
         <h1 id="topic-header">📝 选择任务</h1>
-        <div id="semester-group" style="display: flex; justify-content: center; gap: 15px; margin-bottom: 20px;"></div>
+        <div id="semester-group" class="btn-group" style="margin-bottom: 10px;"></div>
         <div id="topic-list" class="checkbox-grid"></div>
         <div class="action-panel">
             <button class="btn-square" onclick="location.reload()">
@@ -150,16 +163,19 @@
         <div id="prog-text" class="progress-text">1 / 10</div>
         
         <div id="hint-area" class="hint-display"></div>
-        <div id="work-area" class="practice-area">
-            <div id="thumb-up">👍</div>
-            <div id="draw-target"></div>
-            <button id="skip-char-btn" style="display:none;" onclick="skipCurrentChar()">太简单，跳过 ⏭️</button>
-        </div>
         
-        <div class="controls-row">
-            <button class="btn-action btn-quit" onclick="location.reload()">结束</button>
-            <button id="prev-btn" class="btn-action btn-nav" onclick="moveQuestion(-1)">⬅️ 上一个</button>
-            <button id="next-btn" class="btn-action btn-nav" onclick="moveQuestion(1)">下一个 ➡️</button>
+        <div class="practice-main">
+            <div id="work-area" class="practice-area">
+                <div id="thumb-up">👍</div>
+                <div id="draw-target"></div>
+                <button id="skip-char-btn" style="display:none;" onclick="skipCurrentChar()">太简单，跳过 ⏭️</button>
+            </div>
+            
+            <div class="controls-row">
+                <button class="btn-action btn-quit" onclick="location.reload()">结束</button>
+                <button id="prev-btn" class="btn-action btn-nav" onclick="moveQuestion(-1)">⬅️ 上一个</button>
+                <button id="next-btn" class="btn-action btn-nav" onclick="moveQuestion(1)">下一个 ➡️</button>
+            </div>
         </div>
     </div>
 
@@ -401,6 +417,7 @@
         autoJump();
     }
 
+    // 🔴 核心重写：受控闪现逻辑
     function jumpTo(idx) {
         if(practiceChars[idx].isP || practiceChars[idx].done) return; 
 
@@ -408,37 +425,56 @@
         document.getElementById('draw-target').innerHTML = `<div id="hz-box" class="hanzi-box"></div>`;
         
         let boxSize = window.innerWidth <= 768 ? 200 : 260;
+        let isChallenge = currentMode === 'challenge';
         
+        // 彻底禁止 HanziWriter 自己乱闪，把控制权拿过来
         hzWriter = HanziWriter.create('hz-box', practiceChars[idx].char, {
-            width: boxSize, height: boxSize, padding: 15, showOutline: false, strokeColor: '#1e293b', drawingColor: '#3b82f6'
+            width: boxSize, height: boxSize, padding: 15, 
+            showOutline: false, 
+            showCharacter: false, // 默认隐藏！
+            strokeColor: '#1e293b', drawingColor: '#3b82f6'
         });
 
         let charHasMistake = false;
 
-        hzWriter.quiz({ 
-            onMistake: () => { 
-                let q = practiceList[curIdx];
-                q.isWrong = true; 
-                let currentChar = practiceChars[idx].char;
-                if (!q.mistakeChars.find(c => c.char === currentChar)) {
-                    q.mistakeChars.push({ char: currentChar, pinyin: practiceChars[idx].pinyin });
+        function startQuiz() {
+            hzWriter.quiz({ 
+                onMistake: () => { 
+                    let q = practiceList[curIdx];
+                    q.isWrong = true; 
+                    let currentChar = practiceChars[idx].char;
+                    if (!q.mistakeChars.find(c => c.char === currentChar)) {
+                        q.mistakeChars.push({ char: currentChar, pinyin: practiceChars[idx].pinyin });
+                    }
+                    charHasMistake = true;
+                },
+                onComplete: () => {
+                    showThumb();
+                    if (!charHasMistake && !practiceChars[idx].done) { totalCorrectCount++; }
+                    
+                    practiceChars[idx].done = true;
+                    let pyEl = document.getElementById(`py-${idx}`);
+                    pyEl.classList.add('done');
+                    
+                    pyEl.innerHTML = `<div style="font-size:14px; line-height:1; opacity:0.8;">${practiceChars[idx].pinyin}</div>
+                                      <div style="font-size:32px; font-weight:900; line-height:1.2; margin-top:2px;">${practiceChars[idx].char}</div>`;
+                    
+                    setTimeout(autoJump, 600);
                 }
-                charHasMistake = true;
-            },
-            onComplete: () => {
-                showThumb();
-                if (!charHasMistake && !practiceChars[idx].done) { totalCorrectCount++; }
-                
-                practiceChars[idx].done = true;
-                let pyEl = document.getElementById(`py-${idx}`);
-                pyEl.classList.add('done');
-                
-                pyEl.innerHTML = `<div style="font-size:14px; line-height:1; opacity:0.8;">${practiceChars[idx].pinyin}</div>
-                                  <div style="font-size:32px; font-weight:900; line-height:1.2; margin-top:2px;">${practiceChars[idx].char}</div>`;
-                
-                setTimeout(autoJump, 600);
-            }
-        });
+            });
+        }
+
+        if (!isChallenge) {
+            // 练习模式：刻意且优雅地闪现 0.5 秒钟
+            hzWriter.showCharacter();
+            setTimeout(() => {
+                hzWriter.hideCharacter();
+                startQuiz();
+            }, 500); 
+        } else {
+            // 挑战模式：零闪现，直接开考！
+            startQuiz();
+        }
     }
 
     function skipCurrentChar() {
@@ -531,7 +567,6 @@
         }
     }
 
-    // 🟢 练习模式结算：100% 才能拿门票
     function showPracticeResult() {
         currentWrongItems = [];
         if (curSub === 'English') {
@@ -551,7 +586,7 @@
         const isAllRight = currentWrongItems.length === 0;
         let titleText = "你真棒！";
         let emojiIcon = isAllRight ? '🏆' : '👍';
-        let extraMsg = ""; // 额外奖励文案
+        let extraMsg = ""; 
         
         if (totalCorrectCount === 0 && practiceList.length > 0) {
             titleText = "你是来打酱油的吗？";
@@ -560,7 +595,6 @@
             confetti({ particleCount: 250, spread: 100, origin: { y: 0.5 }, colors: ['#f472b6', '#38bdf8', '#a855f7', '#34d399'] });
             new Audio("https://actions.google.com/sounds/v1/foley/cheer_short.ogg").play().catch(()=>{});
             
-            // 练习模式全对，获得门票！
             extraMsg = "<br><span style='color:#f59e0b; font-size:24px; font-weight:900;'>3秒后进入隐藏奖励关卡...</span>";
             setTimeout(function() {
                 let ticket = Date.now();
@@ -569,7 +603,7 @@
         }
         
         let html = `
-            <div style="padding:40px 0;">
+            <div style="padding:20px 0;">
                 <h1 style="font-size:70px; text-shadow:none; margin-bottom:10px;">${emojiIcon}</h1>
                 <h2 style="font-size:36px; color:#0f172a; margin-top:0;">${titleText}</h2>
                 <p style="font-size:22px; color:#475569; margin:25px 0; font-weight:800;">
@@ -595,7 +629,7 @@
         }
 
         html += `
-                <div class="controls-row" style="justify-content: center; margin-top: ${isAllRight ? '40px' : '20px'};">
+                <div class="controls-row" style="justify-content: center; margin-top: ${isAllRight ? '40px' : '20px'}; height: auto;">
                     <button class="btn-action btn-quit" style="width: 200px; height: 65px; flex: none;" onclick="location.reload()">结束</button>
                 </div>
             </div>
@@ -605,7 +639,6 @@
         showScreen('finish-screen');
     }
 
-    // 🟢 挑战模式结算：>= 90% (0.9) 拿门票
     function showChallengeResult() {
         let accuracy = 0;
 
@@ -634,7 +667,6 @@
             confetti({ particleCount: 300, spread: 100, origin: { y: 0.5 }, colors: ['#fbbf24', '#f59e0b', '#fb923c'] });
             new Audio("https://actions.google.com/sounds/v1/foley/cheer_short.ogg").play().catch(()=>{});
             
-            // 挑战模式 >= 90%，获得门票！
             setTimeout(function() {
                 let ticket = Date.now();
                 window.location.href = "https://andydang2007.github.io/game/psle.html?ticket=" + ticket;
@@ -666,7 +698,7 @@
                 <p style="font-size:24px; color:#475569; margin:30px 0 40px 0; font-weight:800; line-height:1.5;">
                     ${message}
                 </p>
-                <div class="controls-row" style="justify-content: center; margin-top: 40px;">
+                <div class="controls-row" style="justify-content: center; margin-top: 40px; height: auto;">
                     <button class="btn-action btn-quit" style="width: 220px; height: 65px; flex: none;" onclick="location.reload()">结束挑战 🏠</button>
                 </div>
             </div>
@@ -689,9 +721,10 @@
         renderQuestion();
     }
 
+    // 🔴 UI：改写为 Flex 布局适应机制
     function showScreen(id) { 
         document.querySelectorAll('.screen').forEach(s => s.style.display='none'); 
-        document.getElementById(id).style.display='block'; 
+        document.getElementById(id).style.display='flex'; 
     }
 
     init();
