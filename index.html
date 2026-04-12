@@ -124,17 +124,31 @@
             #finish-screen h2 { font-size: 28px !important; }
             #finish-screen p { font-size: 18px !important; }
         }
-
-        /* 💻 平板横屏专属适配：高度利用，按钮靠右置顶 */
+        /* 💻 平板横屏专属适配：高度利用，右侧操作栏优化（上1下2布局） */
         @media (orientation: landscape) and (min-width: 768px) {
-            .container { max-width: 950px; padding: 25px 40px; height: 95dvh; }
-            .practice-main { flex-direction: row; align-items: flex-start; gap: 25px; }
-            .practice-area { margin-bottom: 0; height: 100%; min-height: 300px; }
+            .container { max-width: 1000px; padding: 25px 40px; height: 95dvh; }
+            .practice-main { flex-direction: row; align-items: flex-start; gap: 30px; }
+            .practice-area { margin-bottom: 0; height: 100%; min-height: 300px; flex: 1; }
+            
+            /* 采用 Grid 网格布局，完美实现“上1下2” */
             .controls-row { 
-                flex-direction: column; width: 180px; height: auto; 
-                margin-top: 0; gap: 16px; justify-content: flex-start; /* 完美靠右偏上 */
+                display: grid; 
+                grid-template-columns: 1fr 1fr; /* 底部均分两列 */
+                width: 320px; /* 加宽右侧整个操作区，告别细长 */
+                height: auto; 
+                margin-top: 0; 
+                gap: 18px; /* 增加按钮之间的空隙 */
+                flex: none;
             }
-            .btn-action { height: 75px; width: 100%; }
+            
+            /* 统一加厚所有按钮，显得更方正、厚实好按 */
+            .btn-action { height: 85px; width: 100%; border-radius: 25px; }
+            
+            /* 结束按钮：跨度设置为 1到3，让它独自霸占第一整行 */
+            .btn-quit { grid-column: 1 / 3; font-size: 24px; }
+            
+            /* 下面的导航按钮：字号稍微调小，完美放进半格空间 */
+            .btn-nav { font-size: 18px; padding: 0 5px; }
         }
     </style>
 </head>
