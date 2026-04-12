@@ -158,7 +158,7 @@
     let isRetrySession = false;
     let currentRetryRatio = 1;
 
-    // 🟢 核心：每日次数检查与递增
+        // 🟢 核心：每日次数检查与递增
     function checkAndIncrementLimit(lessons, mode) {
         const today = new Date().toISOString().split('T')[0];
         const storageKey = `spelling_usage_${today}`;
@@ -167,7 +167,8 @@
         for (let lesson of lessons) {
             if (!usage[lesson]) usage[lesson] = { practice: 0, challenge: 0 };
             if (usage[lesson][mode] >= LIMIT) {
-                alert(`这一课你今天已经学过很多次了，学点别的吧！`);
+                // 💡 动态提示：精准报出是哪一课超限了
+                alert(`「${lesson}」你今天已经学过很多次了，学点别的吧！`);
                 return false;
             }
         }
