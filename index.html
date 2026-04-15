@@ -440,7 +440,7 @@
         if (currentWrongItems.length === 0) {
             confetti({ particleCount: 250, spread: 100, origin: { y: 0.5 } });
             new Audio("https://actions.google.com/sounds/v1/foley/cheer_short.ogg").play().catch(()=>{});
-            if (canPlay) setTimeout(() => { window.location.href = "https://andydang2007.github.io/game/psle.html?ticket=" + Date.now(); }, 3000);
+            if (canPlay) setTimeout(() => { window.location.href = "https://andydang2007.github.io/game/popballoons.html?ticket=" + Date.now(); }, 3000);
         }
         
         let html = `<div style="padding:40px 0;"><h1 style="font-size:70px;">${currentWrongItems.length===0?'🏆':'👍'}</h1><h2 style="font-size:36px;">你真棒！</h2><p style="font-size:22px; font-weight:800;">这一次你写对了 <br><span style="color:#10b981; font-size:40px;">${totalCorrectCount}</span> 个字！</p>`;
@@ -471,7 +471,7 @@
         if (acc >= 0.9) {
             confetti({ particleCount: 300, spread: 100 });
             new Audio("https://actions.google.com/sounds/v1/foley/cheer_short.ogg").play().catch(()=>{});
-            setTimeout(() => { window.location.href = "https://andydang2007.github.io/game/psle.html?ticket=" + Date.now(); }, 3000);
+            setTimeout(() => { window.location.href = "https://andydang2007.github.io/game/popballoons.html?ticket=" + Date.now(); }, 3000);
         }
 
         let html = `<div style="padding:40px 0;"><h2 style="font-size:24px; color:#94a3b8;">🏅 挑战结果</h2><h1 style="font-size:90px;">${emoji}</h1><h2 style="font-size:46px; color:#f59e0b;">${stars}</h2><p style="font-size:24px; font-weight:800;">${msg}</p>
