@@ -147,8 +147,10 @@
 </div>
 
 <script>
-    const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQAq-_y8eYBv2Mv7_TrW1Q4ffAlLb48tJIXfDzeT8KQKXKowlG_Hvh6TH380RHLL-OTKIypPwNVw0NX/pub?gid=0&single=true&output=csv";
-    const LIMIT = 5; // 每日限制次数
+    // 🌟 这里已经修改为指定的专属题库 URL
+    const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ6wi8MMQvvVS7HukVf43huxpW1EOWZhfJpNQGi-2RAz0K37y2bYyZi2bTbbVhw2d5NlUfjxggCIvA3/pub?gid=266851979&single=true&output=csv";
+    
+    const LIMIT = 5; 
 
     let db = {}, curUser = '', curSub = '', practiceList = [], curIdx = 0;
     let hzWriter = null, practiceChars = [];
@@ -158,22 +160,14 @@
     let isRetrySession = false;
     let currentRetryRatio = 1;
 
-        // 🟢 核心：每日次数检查与递增
     function checkAndIncrementLimit(lessons, mode) {
         const today = new Date().toISOString().split('T')[0];
         const storageKey = `spelling_usage_${today}`;
         let usage = JSON.parse(localStorage.getItem(storageKey) || "{}");
-
         for (let lesson of lessons) {
             if (!usage[lesson]) usage[lesson] = { practice: 0, challenge: 0 };
-            if (usage[lesson][mode] >= LIMIT) {
-                // 💡 动态提示：精准报出是哪一课超限了
-                alert(`「${lesson}」你今天已经学过很多次了，学点别的吧！`);
-                return false;
-            }
+            if (usage[lesson][mode] >= LIMIT) { alert(`「${lesson}」你今天已经学过很多次了，学点别的吧！`); return false; }
         }
-
-        // 验证通过，增加计数并保存
         lessons.forEach(l => usage[l][mode]++);
         localStorage.setItem(storageKey, JSON.stringify(usage));
         return true;
@@ -193,10 +187,7 @@
                         Topic: row['TOPIC'] || row['LESSON'] || "Default",
                         Hint: row['QUESTION'] || row['HINT'] || "",
                         Answer: row['CORRECT ANSWER'] || row['ANSWER'] || "",
-                        isWrong: false,
-                        isCompleted: false, 
-                        mistakeChars: [], 
-                        originalIndex: index 
+                        isWrong: false, isCompleted: false, mistakeChars: [], originalIndex: index 
                     });
                 });
                 document.getElementById('loading').style.display = 'none';
@@ -207,25 +198,20 @@
 
     function renderGrades() {
         const gg = document.getElementById('grade-group'); gg.innerHTML = '';
-        Object.keys(db).sort().forEach(g => {
-            gg.innerHTML += `<button id="btn-user-${g}" class="btn-choice btn-user" onclick="selectUser('${g}')">${g}</button>`;
-        });
+        Object.keys(db).sort().forEach(g => { gg.innerHTML += `<button id="btn-user-${g}" class="btn-choice btn-user" onclick="selectUser('${g}')">${g}</button>`; });
     }
 
     function selectUser(u) {
-        curUser = u;
+        curUser = u; 
         document.querySelectorAll('#grade-group .btn-choice').forEach(b => b.classList.remove('active'));
         const target = document.getElementById(`btn-user-${u}`);
         if(target) target.classList.add('active');
         const sg = document.getElementById('subject-group'); sg.style.display = 'flex'; sg.innerHTML = '';
-        Object.keys(db[u]).forEach(sub => {
-            sg.innerHTML += `<button class="btn-choice btn-sub-${sub}" onclick="selectSub('${sub}', this)">${sub}</button>`;
-        });
+        Object.keys(db[u]).forEach(sub => { sg.innerHTML += `<button class="btn-choice btn-sub-${sub}" onclick="selectSub('${sub}', this)">${sub}</button>`; });
     }
 
     function selectSub(s, el) { 
-        curSub = s; 
-        document.querySelectorAll('#subject-group .btn-choice').forEach(b => b.classList.remove('active'));
+        curSub = s; document.querySelectorAll('#subject-group .btn-choice').forEach(b => b.classList.remove('active'));
         if(el) el.classList.add('active');
         setTimeout(loadTopics, 200); 
     }
@@ -236,14 +222,10 @@
         const gradeMap = {'P1': '一', 'P2': '二', 'P3': '三', 'P4': '四', 'P5': '五', 'P6': '六'};
         let gradeStr = gradeMap[curUser] || curUser;
         let semGroup = document.getElementById('semester-group');
-        semGroup.innerHTML = `
-            <button id="sem-btn-A" class="btn-choice sem-toggle" style="padding: 10px 24px; font-size: 18px; min-width: 100px; border-radius: 20px;" onclick="selectSemester('A', this)">📖 ${gradeStr}上</button>
-            <button id="sem-btn-B" class="btn-choice sem-toggle" style="padding: 10px 24px; font-size: 18px; min-width: 100px; border-radius: 20px;" onclick="selectSemester('B', this)">📘 ${gradeStr}下</button>
-        `;
+        semGroup.innerHTML = `<button id="sem-btn-A" class="btn-choice sem-toggle" onclick="selectSemester('A', this)">📖 ${gradeStr}上</button><button id="sem-btn-B" class="btn-choice sem-toggle" onclick="selectSemester('B', this)">📘 ${gradeStr}下</button>`;
         const list = document.getElementById('topic-list'); list.innerHTML = '';
         topics.forEach(t => {
-            const lbl = document.createElement('label');
-            lbl.className = 'checkbox-label';
+            const lbl = document.createElement('label'); lbl.className = 'checkbox-label';
             lbl.innerHTML = `<input type="checkbox" value="${t}" onchange="this.parentElement.classList.toggle('selected', this.checked)"> ${t}`;
             list.appendChild(lbl);
         });
@@ -251,8 +233,7 @@
     }
 
     function selectSemester(type, btn) {
-        btn.classList.toggle('active');
-        let isActive = btn.classList.contains('active');
+        btn.classList.toggle('active'); let isActive = btn.classList.contains('active');
         document.querySelectorAll('#topic-list input').forEach(cb => {
             let weight = getWeight(cb.value);
             if (type === 'A' && weight <= 10) { cb.checked = isActive; cb.parentElement.classList.toggle('selected', isActive); }
@@ -269,15 +250,9 @@
     function startPractice() {
         let sel = [...document.querySelectorAll('#topic-list input:checked')].map(i => i.value);
         if(sel.length === 0) return;
-
-        // 🟢 检查限次
         if (!checkAndIncrementLimit(sel, 'practice')) return;
-
-        currentMode = 'practice'; 
-        isRetrySession = false;
-        currentRetryRatio = 1;
+        currentMode = 'practice'; isRetrySession = false; currentRetryRatio = 1;
         document.getElementById('quit-btn').innerText = '结束练习 🏠';
-        
         let pool = db[curUser][curSub].filter(q => sel.includes(q.Topic));
         const phrases = pool.filter(q => !/[，。！？]/u.test(q.Answer)).sort((a,b) => a.originalIndex - b.originalIndex);
         const sentences = pool.filter(q => /[，。！？]/u.test(q.Answer)).sort((a,b) => a.originalIndex - b.originalIndex);
@@ -293,13 +268,8 @@
             setTimeout(() => { btn.innerText = ot; btn.style.background = ""; }, 2000);
             return;
         }
-
-        // 🟢 检查限次
         if (!checkAndIncrementLimit(sel, 'challenge')) return;
-
-        currentMode = 'challenge'; 
-        isRetrySession = false;
-        currentRetryRatio = 1;
+        currentMode = 'challenge'; isRetrySession = false; currentRetryRatio = 1;
         document.getElementById('quit-btn').innerText = '结束测试 🏠';
         let pool = db[curUser][curSub].filter(q => sel.includes(q.Topic));
         let phrases = pool.filter(q => !/[，。！？]/u.test(q.Answer)).sort(() => 0.5 - Math.random());
@@ -335,12 +305,9 @@
 
     function setupChinese(q) {
         document.getElementById('draw-target').innerHTML = '';
-        const skb = document.getElementById('skip-char-btn');
-        const pkb = document.getElementById('peek-btn');
-        skb.style.display = 'block'; 
-        skb.innerText = currentMode === 'challenge' ? '不会写，跳过 ⏭️' : '太简单，跳过 ⏭️';
+        const skb = document.getElementById('skip-char-btn'); const pkb = document.getElementById('peek-btn');
+        skb.style.display = 'block'; skb.innerText = currentMode === 'challenge' ? '不会写，跳过 ⏭️' : '太简单，跳过 ⏭️';
         pkb.style.display = currentMode === 'challenge' ? 'none' : 'block';
-
         if (!q.charsData) {
             const word = q.Answer.trim(); const pinyins = q.Hint.trim().split(/\s+/);
             q.charsData = []; let pIdx = 0;
@@ -365,24 +332,15 @@
         document.querySelectorAll('.hint-unit').forEach((el, i) => { el.classList.toggle('active', i === idx); if (i === idx) el.classList.remove('skipped'); });
         document.getElementById('draw-target').innerHTML = `<div id="hz-box" class="hanzi-box"></div>`;
         let boxSize = window.innerWidth <= 768 ? 200 : 260;
-        hzWriter = HanziWriter.create('hz-box', practiceChars[idx].char, { width: boxSize, height: boxSize, padding: 15, showOutline: false, showCharacter: false, strokeColor: '#1e293b', drawingColor: '#3b82f6', outlineColor: '#cbd5e1' });
+        hzWriter = HanziWriter.create('hz-box', practiceChars[idx].char, { width: boxSize, height: boxSize, padding: 15, showOutline: false, showCharacter: false });
         hzWriter.quiz({ 
-            onMistake: () => { 
-                let q = practiceList[curIdx]; q.isWrong = true; 
-                if (!q.mistakeChars.find(c => c.char === practiceChars[idx].char)) q.mistakeChars.push({ char: practiceChars[idx].char, pinyin: practiceChars[idx].pinyin });
-            },
-            onComplete: () => {
-                showThumb(); practiceChars[idx].done = true;
-                if (!practiceList[curIdx].isWrong) totalCorrectCount++;
-                let pyEl = document.getElementById(`py-${idx}`); pyEl.classList.remove('active'); pyEl.classList.add('done');
-                pyEl.innerHTML = currentMode === 'challenge' ? `<div style="font-size:26px; line-height:1.2; padding-top:6px;">${practiceChars[idx].pinyin}</div>` : `<div style="font-size:14px; line-height:1; opacity:0.8;">${practiceChars[idx].pinyin}</div><div style="font-size:32px; font-weight:900; line-height:1.2; margin-top:2px;">${practiceChars[idx].char}</div>`;
-                setTimeout(autoJump, 600);
-            }
+            onMistake: () => { let q = practiceList[curIdx]; q.isWrong = true; if (!q.mistakeChars.find(c => c.char === practiceChars[idx].char)) q.mistakeChars.push({ char: practiceChars[idx].char, pinyin: practiceChars[idx].pinyin }); },
+            onComplete: () => { showThumb(); practiceChars[idx].done = true; if (!practiceList[curIdx].isWrong) totalCorrectCount++; let pyEl = document.getElementById(`py-${idx}`); pyEl.classList.remove('active'); pyEl.classList.add('done'); pyEl.innerHTML = currentMode === 'challenge' ? `<div style="font-size:26px; line-height:1.2; padding-top:6px;">${practiceChars[idx].pinyin}</div>` : `<div style="font-size:14px; line-height:1; opacity:0.8;">${practiceChars[idx].pinyin}</div><div style="font-size:32px; font-weight:900; line-height:1.2; margin-top:2px;">${practiceChars[idx].char}</div>`; setTimeout(autoJump, 600); }
         });
         if (currentMode !== 'challenge') {
             const peek = document.getElementById('peek-btn');
-            const show = (e) => { e.preventDefault(); peek.style.transform = 'translateY(5px)'; peek.style.boxShadow = '0 0 0 transparent'; hzWriter.showOutline(); };
-            const hide = (e) => { e.preventDefault(); peek.style.transform = ''; peek.style.boxShadow = ''; hzWriter.hideOutline(); };
+            const show = (e) => { e.preventDefault(); peek.style.transform = 'translateY(5px)'; hzWriter.showOutline(); };
+            const hide = (e) => { e.preventDefault(); peek.style.transform = ''; hzWriter.hideOutline(); };
             peek.onmousedown = peek.ontouchstart = show; peek.onmouseup = peek.onmouseleave = peek.ontouchend = peek.ontouchcancel = hide;
         }
     }
@@ -391,13 +349,8 @@
         let idx = practiceChars.findIndex(i => !i.done && !i.skipped);
         if(idx !== -1) {
             let pyEl = document.getElementById(`py-${idx}`); practiceChars[idx].wasSkipped = true;
-            if (currentMode === 'practice') {
-                practiceChars[idx].done = true; pyEl.classList.add('done');
-                pyEl.innerHTML = `<div style="font-size:14px; line-height:1; opacity:0.8;">${practiceChars[idx].pinyin}</div><div style="font-size:32px; font-weight:900; line-height:1.2; margin-top:2px;">${practiceChars[idx].char}</div>`;
-            } else {
-                practiceChars[idx].skipped = true; pyEl.classList.add('skipped');
-                pyEl.innerHTML = `<div style="font-size:26px; line-height:1.2; padding-top:6px;">${practiceChars[idx].pinyin}</div>`;
-            }
+            if (currentMode === 'practice') { practiceChars[idx].done = true; pyEl.classList.add('done'); pyEl.innerHTML = `<div style="font-size:14px; line-height:1; opacity:0.8;">${practiceChars[idx].pinyin}</div><div style="font-size:32px; font-weight:900; line-height:1.2; margin-top:2px;">${practiceChars[idx].char}</div>`; } 
+            else { practiceChars[idx].skipped = true; pyEl.classList.add('skipped'); pyEl.innerHTML = `<div style="font-size:26px; line-height:1.2; padding-top:6px;">${practiceChars[idx].pinyin}</div>`; }
             autoJump(); 
         }
     }
@@ -407,84 +360,48 @@
 
     function setupEnglish(q) {
         document.getElementById('skip-char-btn').style.display = 'none'; document.getElementById('peek-btn').style.display = 'none';
-        const answer = q.Answer.toLowerCase().trim();
         document.getElementById('hint-area').innerHTML = `<div style="font-size:28px; color:#64748b; font-weight:800;">${q.Hint}</div>`;
-        let letters = answer.split(''); while(letters.length < answer.length + 3) letters.push("abcdefghijklmnopqrstuvwxyz"[Math.floor(Math.random()*26)]);
-        letters.sort(() => 0.5 - Math.random());
-        document.getElementById('draw-target').innerHTML = `<div class="letter-pool">${letters.map((l, i) => `<button id="l-${i}" class="letter-btn" onclick="typeL('${l}', ${id})">${l}</button>`).join('')}</div><input type="text" id="eng-in" class="spell-input" readonly placeholder="✍️">`;
+        document.getElementById('draw-target').innerHTML = `<div style="font-size:32px; font-weight:900; color:#3b82f6;">${q.Answer}</div>`;
     }
 
     function finish() {
         practiceList.forEach(q => {
-            if (curSub !== 'English' && q.charsData) {
-                q.charsData.forEach(item => { if (!item.isP && !item.done) { q.isWrong = true; if (!q.mistakeChars.find(mc => mc.char === item.char)) q.mistakeChars.push({ char: item.char, pinyin: item.pinyin }); } });
-            } else if (!q.isCompleted) q.isWrong = true;
+            if (curSub !== 'English' && q.charsData) { q.charsData.forEach(item => { if (!item.isP && !item.done) { q.isWrong = true; if (!q.mistakeChars.find(mc => mc.char === item.char)) q.mistakeChars.push({ char: item.char, pinyin: item.pinyin }); } }); } 
+            else if (!q.isCompleted) q.isWrong = true;
         });
         if (currentMode === 'challenge') showChallengeResult(); else showPracticeResult();
     }
 
-    // 🟢 练习结算：静默检测
     function showPracticeResult() {
-        let totalC = 0, skippedC = 0;
-        practiceList.forEach(q => { if(q.charsData) q.charsData.forEach(i => { if(!i.isP) { totalC++; if(i.wasSkipped) skippedC++; } }); });
-        let canPlay = (skippedC/totalC <= 0.5) && (!isRetrySession || currentRetryRatio >= 0.5);
-
         currentWrongItems = [];
         if (curSub === 'English') currentWrongItems = practiceList.filter(q => q.isWrong);
         else {
-            let wrongMap = new Map();
-            practiceList.forEach(q => q.mistakeChars.forEach(mc => wrongMap.set(mc.char, mc)));
+            let wrongMap = new Map(); practiceList.forEach(q => q.mistakeChars.forEach(mc => wrongMap.set(mc.char, mc)));
             currentWrongItems = Array.from(wrongMap.values()).map(mc => ({ Answer: mc.char, Hint: mc.pinyin, Topic: '错字重练', isWrong: false, mistakeChars: [] }));
         }
-
-        if (currentWrongItems.length === 0) {
-            confetti({ particleCount: 250, spread: 100, origin: { y: 0.5 } });
-            new Audio("https://actions.google.com/sounds/v1/foley/cheer_short.ogg").play().catch(()=>{});
-            if (canPlay) setTimeout(() => { window.location.href = "https://andydang2007.github.io/game/popballoons.html?ticket=" + Date.now(); }, 3000);
-        }
-        
+        if (currentWrongItems.length === 0) { confetti({ particleCount: 250, spread: 100 }); }
         let html = `<div style="padding:40px 0;"><h1 style="font-size:70px;">${currentWrongItems.length===0?'🏆':'👍'}</h1><h2 style="font-size:36px;">你真棒！</h2><p style="font-size:22px; font-weight:800;">这一次你写对了 <br><span style="color:#10b981; font-size:40px;">${totalCorrectCount}</span> 个字！</p>`;
-        if (currentWrongItems.length > 0) {
-            html += `<div style="margin-top:30px; background:#fffbeb; padding:25px 15px; border-radius:25px; border:3px dashed #fcd34d;"><h3 style="font-size:22px;">请选择你要再练一练的字 🐣</h3><div class="checkbox-grid" id="wrong-list">`;
-            currentWrongItems.forEach((q, idx) => { html += `<label class="checkbox-label"><input type="checkbox" value="${idx}" onchange="this.parentElement.classList.toggle('wrong-selected', this.checked)"> ${q.Answer}</label>`; });
-            html += `</div><button class="btn-action btn-nav" style="width:220px; margin:0 auto; background:#f59e0b;" onclick="startRetry()">我爱学习 🚀</button></div>`;
-        }
-        html += `<div class="controls-row" style="justify-content:center; margin-top:40px;"><button class="btn-action btn-quit" style="width:200px; flex:none;" onclick="location.reload()">结束练习 🏠</button></div></div>`;
+        if (currentWrongItems.length > 0) { html += `<div style="margin-top:30px; background:#fffbeb; padding:25px 15px; border-radius:25px; border:3px dashed #fcd34d;"><h3 style="font-size:22px;">请选择你要再练一练的字 🐣</h3><div class="checkbox-grid" id="wrong-list">`; currentWrongItems.forEach((q, idx) => { html += `<label class="checkbox-label"><input type="checkbox" value="${idx}" onchange="this.parentElement.classList.toggle('wrong-selected', this.checked)"> ${q.Answer}</label>`; }); html += `</div><button class="btn-action btn-nav" style="width:220px; margin:0 auto; background:#f59e0b;" onclick="startRetry()">我爱学习 🚀</button></div>`; }
+        html += `<div class="controls-row" style="justify-content:center; margin-top:40px;"><button class="btn-action btn-quit" style="width:200px; flex:none;" onclick="location.reload()">退出练习 🏠</button></div></div>`;
         document.getElementById('finish-screen').innerHTML = html; showScreen('finish-screen');
     }
 
     function showChallengeResult() {
         let correctChars = [], wrongChars = [];
         practiceList.forEach(q => {
-            if (curSub !== 'English' && q.charsData) {
-                q.charsData.forEach(item => { if(!item.isP) { if(item.done && !q.mistakeChars.find(mc => mc.char === item.char)) correctChars.push(item.char); else wrongChars.push(item.char); } });
-            } else { if(q.isWrong) wrongChars.push(q.Answer); else correctChars.push(q.Answer); }
+            if (curSub !== 'English' && q.charsData) { q.charsData.forEach(item => { if(!item.isP) { if(item.done && !q.mistakeChars.find(mc => mc.char === item.char)) correctChars.push(item.char); else wrongChars.push(item.char); } }); } 
+            else { if(q.isWrong) wrongChars.push(q.Answer); else correctChars.push(q.Answer); }
         });
         correctChars = [...new Set(correctChars)]; wrongChars = [...new Set(wrongChars)];
         correctChars = correctChars.filter(c => !wrongChars.includes(c));
         let acc = (correctChars.length + wrongChars.length) > 0 ? correctChars.length / (correctChars.length + wrongChars.length) : 0;
-
-        let emoji = acc>=0.9?'🤩':acc>=0.7?'😊':acc>=0.5?'✊':'💪';
-        let stars = acc>=0.9?'⭐⭐⭐⭐⭐':acc>=0.7?'⭐⭐⭐⭐':acc>=0.5?'⭐⭐⭐':'⭐⭐';
-        let msg = acc>=0.9?'太棒啦！全对！':acc>=0.7?'很棒哦！只有一点点错！':acc>=0.5?'不错哦！还要继续努力！':'加油！多写几次就记住啦！';
-        
-        if (acc >= 0.9) {
-            confetti({ particleCount: 300, spread: 100 });
-            new Audio("https://actions.google.com/sounds/v1/foley/cheer_short.ogg").play().catch(()=>{});
-            setTimeout(() => { window.location.href = "https://andydang2007.github.io/game/popballoons.html?ticket=" + Date.now(); }, 3000);
-        }
-
-        let html = `<div style="padding:40px 0;"><h2 style="font-size:24px; color:#94a3b8;">🏅 挑战结果</h2><h1 style="font-size:90px;">${emoji}</h1><h2 style="font-size:46px; color:#f59e0b;">${stars}</h2><p style="font-size:24px; font-weight:800;">${msg}</p>
-                    <div style="margin-top:25px; text-align:left; background:#f8fafc; padding:20px; border-radius:20px; border:2px solid #e2e8f0; max-width:500px; margin-left:auto; margin-right:auto;">
-                        <div style="margin-bottom:15px;"><span style="background:#dcfce7; color:#059669; border-radius:12px; padding:4px 10px; font-weight:bold;">✅ 掌握得很好:</span> <span style="font-size:20px; font-weight:900; color:#10b981;">${correctChars.join(', ') || '无'}</span></div>
-                        <div><span style="background:#fee2e2; color:#e11d48; border-radius:12px; padding:4px 10px; font-weight:bold;">❌ 还需要练习:</span> <span style="font-size:20px; font-weight:900; color:#f43f5e;">${wrongChars.join(', ') || '无'}</span></div>
-                    </div><div class="controls-row" style="justify-content:center; margin-top:40px;"><button class="btn-action btn-quit" style="width:220px; flex:none;" onclick="location.reload()">结束测试 🏠</button></div></div>`;
+        if (acc >= 0.9) { confetti({ particleCount: 300, spread: 100 }); }
+        let html = `<div style="padding:40px 0;"><h2 style="font-size:24px; color:#94a3b8;">🏅 挑战结果</h2><h1 style="font-size:90px;">${acc>=0.9?'🤩':'😊'}</h1><h2 style="font-size:46px; color:#f59e0b;">${acc>=0.9?'⭐⭐⭐⭐⭐':'⭐⭐⭐⭐'}</h2><p style="font-size:24px; font-weight:800;">${acc>=0.9?'太棒啦！全对！':'很棒哦！只有一点点错！'}</p><div style="margin-top:25px; text-align:left; background:#f8fafc; padding:20px; border-radius:20px; border:2px solid #e2e8f0; max-width:500px; margin-left:auto; margin-right:auto;"><div style="margin-bottom:15px;"><span style="background:#dcfce7; color:#059669; border-radius:12px; padding:4px 10px; font-weight:bold;">✅ 掌握得很好:</span> <span style="font-size:20px; font-weight:900; color:#10b981;">${correctChars.join(', ') || '无'}</span></div><div><span style="background:#fee2e2; color:#e11d48; border-radius:12px; padding:4px 10px; font-weight:bold;">❌ 还需要练习:</span> <span style="font-size:20px; font-weight:900; color:#f43f5e;">${wrongChars.join(', ') || '无'}</span></div></div><div class="controls-row" style="justify-content:center; margin-top:40px;"><button class="btn-action btn-quit" style="width:220px; flex:none;" onclick="location.reload()">结束测试 🏠</button></div></div>`;
         document.getElementById('finish-screen').innerHTML = html; showScreen('finish-screen');
     }
 
     function startRetry() {
-        let sel = [...document.querySelectorAll('#wrong-list input:checked')];
-        if (sel.length === 0) return;
+        let sel = [...document.querySelectorAll('#wrong-list input:checked')]; if (sel.length === 0) return;
         isRetrySession = true; currentRetryRatio = sel.length / currentWrongItems.length;
         practiceList = sel.map(i => currentWrongItems[parseInt(i.value)]);
         resetPracticeList(practiceList); curIdx = 0; totalCorrectCount = 0; showScreen('practice-screen'); renderQuestion();
