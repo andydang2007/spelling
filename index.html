@@ -386,6 +386,7 @@
         document.getElementById('finish-screen').innerHTML = html; showScreen('finish-screen');
     }
 
+    // 🌟 终极挑战结算界面：90%以上奖励传送门！
     function showChallengeResult() {
         let correctChars = [], wrongChars = [];
         practiceList.forEach(q => {
@@ -395,8 +396,28 @@
         correctChars = [...new Set(correctChars)]; wrongChars = [...new Set(wrongChars)];
         correctChars = correctChars.filter(c => !wrongChars.includes(c));
         let acc = (correctChars.length + wrongChars.length) > 0 ? correctChars.length / (correctChars.length + wrongChars.length) : 0;
+        
         if (acc >= 0.9) { confetti({ particleCount: 300, spread: 100 }); }
-        let html = `<div style="padding:40px 0;"><h2 style="font-size:24px; color:#94a3b8;">🏅 挑战结果</h2><h1 style="font-size:90px;">${acc>=0.9?'🤩':'😊'}</h1><h2 style="font-size:46px; color:#f59e0b;">${acc>=0.9?'⭐⭐⭐⭐⭐':'⭐⭐⭐⭐'}</h2><p style="font-size:24px; font-weight:800;">${acc>=0.9?'太棒啦！全对！':'很棒哦！只有一点点错！'}</p><div style="margin-top:25px; text-align:left; background:#f8fafc; padding:20px; border-radius:20px; border:2px solid #e2e8f0; max-width:500px; margin-left:auto; margin-right:auto;"><div style="margin-bottom:15px;"><span style="background:#dcfce7; color:#059669; border-radius:12px; padding:4px 10px; font-weight:bold;">✅ 掌握得很好:</span> <span style="font-size:20px; font-weight:900; color:#10b981;">${correctChars.join(', ') || '无'}</span></div><div><span style="background:#fee2e2; color:#e11d48; border-radius:12px; padding:4px 10px; font-weight:bold;">❌ 还需要练习:</span> <span style="font-size:20px; font-weight:900; color:#f43f5e;">${wrongChars.join(', ') || '无'}</span></div></div><div class="controls-row" style="justify-content:center; margin-top:40px;"><button class="btn-action btn-quit" style="width:220px; flex:none;" onclick="location.reload()">结束测试 🏠</button></div></div>`;
+        
+        let html = `<div style="padding:40px 0;">
+            <h2 style="font-size:24px; color:#94a3b8;">🏅 挑战结果</h2>
+            <h1 style="font-size:90px;">${acc>=0.9?'🤩':'😊'}</h1>
+            <h2 style="font-size:46px; color:#f59e0b;">${acc>=0.9?'⭐⭐⭐⭐⭐':'⭐⭐⭐⭐'}</h2>
+            <p style="font-size:24px; font-weight:800;">${acc>=0.9?'太棒啦！':'很棒哦！只有一点点错！'}</p>
+            <div style="margin-top:25px; text-align:left; background:#f8fafc; padding:20px; border-radius:20px; border:2px solid #e2e8f0; max-width:500px; margin-left:auto; margin-right:auto;">
+                <div style="margin-bottom:15px;"><span style="background:#dcfce7; color:#059669; border-radius:12px; padding:4px 10px; font-weight:bold;">✅ 掌握得很好:</span> <span style="font-size:20px; font-weight:900; color:#10b981;">${correctChars.join(', ') || '无'}</span></div>
+                <div><span style="background:#fee2e2; color:#e11d48; border-radius:12px; padding:4px 10px; font-weight:bold;">❌ 还需要练习:</span> <span style="font-size:20px; font-weight:900; color:#f43f5e;">${wrongChars.join(', ') || '无'}</span></div>
+            </div>
+            <div class="controls-row" style="justify-content:center; margin-top:40px;">`;
+        
+        // 🌟 核心跳转逻辑：直达学生版接接乐游戏
+        if (acc >= 0.9 && !isRetrySession) {
+            html += `<button class="btn-action btn-nav" style="width:220px; flex:none; background:#10b981; color:white; box-shadow:0 6px 0 #059669; border-color:#059669;" onclick="window.location.href='./game/popforstudents.html?ticket=' + Date.now() + '&returnUrl=index.html'">领取神秘奖励 🎁</button>`;
+        }
+        
+        html += `<button class="btn-action btn-quit" style="width:${acc>=0.9 && !isRetrySession ? '150px' : '220px'}; flex:none;" onclick="location.reload()">结束 🏠</button>
+            </div>
+        </div>`;
         document.getElementById('finish-screen').innerHTML = html; showScreen('finish-screen');
     }
 
