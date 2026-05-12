@@ -45,6 +45,9 @@
         .checkbox-label.selected { border-color: #a855f7; background: #faf5ff; color: #7e22ce; box-shadow: 0 4px 0 #d8b4fe; }
         .checkbox-label.wrong-selected { border-color: #f59e0b; background: #fffbeb; color: #d97706; box-shadow: 0 4px 0 #fcd34d; }
 
+        /* 变灰禁用的样式 */
+        .checkbox-label.disabled-lesson { background: #f1f5f9; color: #cbd5e1; border-color: #e2e8f0; cursor: not-allowed; box-shadow: none; opacity: 0.6; }
+
         .action-panel { display: flex; gap: 15px; margin-top: 10px; height: auto; min-height: 130px; padding-bottom: 20px; width: 100%; flex: none; }
         .btn-square { flex: 0 0 140px; border-radius: 35px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; background: #f1f5f9; color: #64748b; border: 3px solid #e2e8f0; box-shadow: 0 6px 0 #cbd5e1; font-weight: 900; cursor: pointer; transition: 0.15s; }
         .btn-square:active { transform: translateY(6px); box-shadow: 0 0 0 transparent; }
@@ -147,10 +150,13 @@
 </div>
 
 <script>
-    // 🌟 这里已经修改为指定的专属题库 URL
+    // 🌟 题库 URL
     const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ6wi8MMQvvVS7HukVf43huxpW1EOWZhfJpNQGi-2RAz0K37y2bYyZi2bTbbVhw2d5NlUfjxggCIvA3/pub?gid=266851979&single=true&output=csv";
     
     const LIMIT = 5; 
+    
+    // 🌟 这里是简单的开关：控制第 1 到 X 课不能玩（默认设为 8）
+    const DISABLED_MAX_LESSON = 8; 
 
     let db = {}, curUser = '', curSub = '', practiceList = [], curIdx = 0;
     let hzWriter = null, practiceChars = [];
@@ -224,9 +230,15 @@
         let semGroup = document.getElementById('semester-group');
         semGroup.innerHTML = `<button id="sem-btn-A" class="btn-choice sem-toggle" onclick="selectSemester('A', this)">📖 ${gradeStr}上</button><button id="sem-btn-B" class="btn-choice sem-toggle" onclick="selectSemester('B', this)">📘 ${gradeStr}下</button>`;
         const list = document.getElementById('topic-list'); list.innerHTML = '';
+        
         topics.forEach(t => {
-            const lbl = document.createElement('label'); lbl.className = 'checkbox-label';
-            lbl.innerHTML = `<input type="checkbox" value="${t}" onchange="this.parentElement.classList.toggle('selected', this.checked)"> ${t}`;
+            const weight = getWeight(t);
+            // 🌟 判断逻辑：如果课号小于等于 DISABLED_MAX_LESSON，就变灰并禁止点击
+            const isDisabled = weight <= DISABLED_MAX_LESSON;
+            
+            const lbl = document.createElement('label'); 
+            lbl.className = 'checkbox-label' + (isDisabled ? ' disabled-lesson' : '');
+            lbl.innerHTML = `<input type="checkbox" value="${t}" ${isDisabled ? 'disabled' : ''} onchange="this.parentElement.classList.toggle('selected', this.checked)"> ${t}`;
             list.appendChild(lbl);
         });
         showScreen('topic-screen');
@@ -236,6 +248,8 @@
         btn.classList.toggle('active'); let isActive = btn.classList.contains('active');
         document.querySelectorAll('#topic-list input').forEach(cb => {
             let weight = getWeight(cb.value);
+            // 如果已经被禁用了，则跳过全选
+            if(cb.disabled) return;
             if (type === 'A' && weight <= 10) { cb.checked = isActive; cb.parentElement.classList.toggle('selected', isActive); }
             else if (type === 'B' && (weight > 10 && weight < 999)) { cb.checked = isActive; cb.parentElement.classList.toggle('selected', isActive); }
         });
@@ -335,7 +349,10 @@
         hzWriter = HanziWriter.create('hz-box', practiceChars[idx].char, { width: boxSize, height: boxSize, padding: 15, showOutline: false, showCharacter: false });
         hzWriter.quiz({ 
             onMistake: () => { let q = practiceList[curIdx]; q.isWrong = true; if (!q.mistakeChars.find(c => c.char === practiceChars[idx].char)) q.mistakeChars.push({ char: practiceChars[idx].char, pinyin: practiceChars[idx].pinyin }); },
-            onComplete: () => { showThumb(); practiceChars[idx].done = true; if (!practiceList[curIdx].isWrong) totalCorrectCount++; let pyEl = document.getElementById(`py-${idx}`); pyEl.classList.remove('active'); pyEl.classList.add('done'); pyEl.innerHTML = currentMode === 'challenge' ? `<div style="font-size:26px; line-height:1.2; padding-top:6px;">${practiceChars[idx].pinyin}</div>` : `<div style="font-size:14px; line-height:1; opacity:0.8;">${practiceChars[idx].pinyin}</div><div style="font-size:32px; font-weight:900; line-height:1.2; margin-top:2px;">${practiceChars[idx].char}</div>`; setTimeout(autoJump, 600); }
+            onComplete: () => { showThumb(); practiceChars[idx].done = true; 
+                // 🌟 正确数统计
+                if (!practiceList[curIdx].isWrong) totalCorrectCount++; 
+                let pyEl = document.getElementById(`py-${idx}`); pyEl.classList.remove('active'); pyEl.classList.add('done'); pyEl.innerHTML = currentMode === 'challenge' ? `<div style="font-size:26px; line-height:1.2; padding-top:6px;">${practiceChars[idx].pinyin}</div>` : `<div style="font-size:14px; line-height:1; opacity:0.8;">${practiceChars[idx].pinyin}</div><div style="font-size:32px; font-weight:900; line-height:1.2; margin-top:2px;">${practiceChars[idx].char}</div>`; setTimeout(autoJump, 600); }
         });
         if (currentMode !== 'challenge') {
             const peek = document.getElementById('peek-btn');
@@ -362,6 +379,7 @@
         document.getElementById('skip-char-btn').style.display = 'none'; document.getElementById('peek-btn').style.display = 'none';
         document.getElementById('hint-area').innerHTML = `<div style="font-size:28px; color:#64748b; font-weight:800;">${q.Hint}</div>`;
         document.getElementById('draw-target').innerHTML = `<div style="font-size:32px; font-weight:900; color:#3b82f6;">${q.Answer}</div>`;
+        totalCorrectCount++; // 英语模式目前自动算对
     }
 
     function finish() {
@@ -372,6 +390,7 @@
         if (currentMode === 'challenge') showChallengeResult(); else showPracticeResult();
     }
 
+    // 🌟 修改：练习模式现在写对 50% 以上也发奖励
     function showPracticeResult() {
         currentWrongItems = [];
         if (curSub === 'English') currentWrongItems = practiceList.filter(q => q.isWrong);
@@ -379,14 +398,23 @@
             let wrongMap = new Map(); practiceList.forEach(q => q.mistakeChars.forEach(mc => wrongMap.set(mc.char, mc)));
             currentWrongItems = Array.from(wrongMap.values()).map(mc => ({ Answer: mc.char, Hint: mc.pinyin, Topic: '错字重练', isWrong: false, mistakeChars: [] }));
         }
-        if (currentWrongItems.length === 0) { confetti({ particleCount: 250, spread: 100 }); }
-        let html = `<div style="padding:40px 0;"><h1 style="font-size:70px;">${currentWrongItems.length===0?'🏆':'👍'}</h1><h2 style="font-size:36px;">你真棒！</h2><p style="font-size:22px; font-weight:800;">这一次你写对了 <br><span style="color:#10b981; font-size:40px;">${totalCorrectCount}</span> 个字！</p>`;
+        
+        let acc = practiceList.length > 0 ? totalCorrectCount / practiceList.length : 0;
+        if (acc > 0.5) { confetti({ particleCount: 250, spread: 100 }); }
+        
+        let html = `<div style="padding:40px 0;"><h1 style="font-size:70px;">${acc>0.5?'🏆':'👍'}</h1><h2 style="font-size:36px;">你真棒！</h2><p style="font-size:22px; font-weight:800;">这一次你写对了 <br><span style="color:#10b981; font-size:40px;">${totalCorrectCount}</span> 个词！</p>`;
+        
+        // 🌟 练习模式的奖励按钮（50% 门槛）
+        if (acc > 0.5 && !isRetrySession) {
+            html += `<button class="btn-action btn-nav" style="width:240px; margin:20px auto; background:#10b981; color:white; box-shadow:0 6px 0 #059669;" onclick="window.location.href='./game/popforstudents.html?ticket=' + Date.now() + '&returnUrl=index.html'">领取奖励 🎁</button>`;
+        }
+
         if (currentWrongItems.length > 0) { html += `<div style="margin-top:30px; background:#fffbeb; padding:25px 15px; border-radius:25px; border:3px dashed #fcd34d;"><h3 style="font-size:22px;">请选择你要再练一练的字 🐣</h3><div class="checkbox-grid" id="wrong-list">`; currentWrongItems.forEach((q, idx) => { html += `<label class="checkbox-label"><input type="checkbox" value="${idx}" onchange="this.parentElement.classList.toggle('wrong-selected', this.checked)"> ${q.Answer}</label>`; }); html += `</div><button class="btn-action btn-nav" style="width:220px; margin:0 auto; background:#f59e0b;" onclick="startRetry()">我爱学习 🚀</button></div>`; }
         html += `<div class="controls-row" style="justify-content:center; margin-top:40px;"><button class="btn-action btn-quit" style="width:200px; flex:none;" onclick="location.reload()">退出练习 🏠</button></div></div>`;
         document.getElementById('finish-screen').innerHTML = html; showScreen('finish-screen');
     }
 
-    // 🌟 终极挑战结算界面：90%以上奖励传送门！
+    // 🌟 修改：挑战模式奖励门槛降到 50%
     function showChallengeResult() {
         let correctChars = [], wrongChars = [];
         practiceList.forEach(q => {
@@ -397,25 +425,25 @@
         correctChars = correctChars.filter(c => !wrongChars.includes(c));
         let acc = (correctChars.length + wrongChars.length) > 0 ? correctChars.length / (correctChars.length + wrongChars.length) : 0;
         
-        if (acc >= 0.9) { confetti({ particleCount: 300, spread: 100 }); }
+        if (acc > 0.5) { confetti({ particleCount: 300, spread: 100 }); }
         
         let html = `<div style="padding:40px 0;">
             <h2 style="font-size:24px; color:#94a3b8;">🏅 挑战结果</h2>
-            <h1 style="font-size:90px;">${acc>=0.9?'🤩':'😊'}</h1>
-            <h2 style="font-size:46px; color:#f59e0b;">${acc>=0.9?'⭐⭐⭐⭐⭐':'⭐⭐⭐⭐'}</h2>
-            <p style="font-size:24px; font-weight:800;">${acc>=0.9?'太棒啦！':'很棒哦！只有一点点错！'}</p>
+            <h1 style="font-size:90px;">${acc>0.5?'🤩':'😊'}</h1>
+            <h2 style="font-size:46px; color:#f59e0b;">${acc>0.5?'⭐⭐⭐⭐⭐':'⭐⭐⭐'}</h2>
+            <p style="font-size:24px; font-weight:800;">${acc>0.5?'太棒啦！':'继续加油哦！'}</p>
             <div style="margin-top:25px; text-align:left; background:#f8fafc; padding:20px; border-radius:20px; border:2px solid #e2e8f0; max-width:500px; margin-left:auto; margin-right:auto;">
                 <div style="margin-bottom:15px;"><span style="background:#dcfce7; color:#059669; border-radius:12px; padding:4px 10px; font-weight:bold;">✅ 掌握得很好:</span> <span style="font-size:20px; font-weight:900; color:#10b981;">${correctChars.join(', ') || '无'}</span></div>
                 <div><span style="background:#fee2e2; color:#e11d48; border-radius:12px; padding:4px 10px; font-weight:bold;">❌ 还需要练习:</span> <span style="font-size:20px; font-weight:900; color:#f43f5e;">${wrongChars.join(', ') || '无'}</span></div>
             </div>
             <div class="controls-row" style="justify-content:center; margin-top:40px;">`;
         
-        // 🌟 核心跳转逻辑：直达学生版接接乐游戏
-        if (acc >= 0.9 && !isRetrySession) {
+        // 🌟 只要对了一半以上且不是重练，就发奖励
+        if (acc > 0.5 && !isRetrySession) {
             html += `<button class="btn-action btn-nav" style="width:220px; flex:none; background:#10b981; color:white; box-shadow:0 6px 0 #059669; border-color:#059669;" onclick="window.location.href='./game/popforstudents.html?ticket=' + Date.now() + '&returnUrl=index.html'">领取神秘奖励 🎁</button>`;
         }
         
-        html += `<button class="btn-action btn-quit" style="width:${acc>=0.9 && !isRetrySession ? '150px' : '220px'}; flex:none;" onclick="location.reload()">结束 🏠</button>
+        html += `<button class="btn-action btn-quit" style="width:${acc>0.5 && !isRetrySession ? '150px' : '220px'}; flex:none;" onclick="location.reload()">结束 🏠</button>
             </div>
         </div>`;
         document.getElementById('finish-screen').innerHTML = html; showScreen('finish-screen');
