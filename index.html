@@ -440,7 +440,7 @@
         
         // 🌟 只要对了一半以上且不是重练，就发奖励
         if (acc > 0.5 && !isRetrySession) {
-            html += `<button class="btn-action btn-nav" style="width:220px; flex:none; background:#10b981; color:white; box-shadow:0 6px 0 #059669; border-color:#059669;" onclick="window.location.href='./game/popforstudents.html?ticket=' + Date.now() + '&returnUrl=index.html'">领取神秘奖励 🎁</button>`;
+            html += `<button class="btn-action btn-nav" style="width:220px; flex:none; background:#10b981; color:white; box-shadow:0 6px 0 #059669; border-color:#059669;" onclick="window.location.href='https://andydang2007.github.io/game/popforstudents.html?ticket=' + Date.now() + '&returnUrl=index.html'">领取神秘奖励 🎁</button>`;
         }
         
         html += `<button class="btn-action btn-quit" style="width:${acc>0.5 && !isRetrySession ? '150px' : '220px'}; flex:none;" onclick="location.reload()">结束 🏠</button>
