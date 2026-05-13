@@ -406,7 +406,7 @@
         
         // 🌟 练习模式的奖励按钮（50% 门槛）
         if (acc > 0.5 && !isRetrySession) {
-            html += `<button class="btn-action btn-nav" style="width:240px; margin:20px auto; background:#10b981; color:white; box-shadow:0 6px 0 #059669;" onclick="window.location.href='./game/popforstudents.html?ticket=' + Date.now() + '&returnUrl=index.html'">领取奖励 🎁</button>`;
+            html += `<button class="btn-action btn-nav" style="width:240px; margin:20px auto; background:#10b981; color:white; box-shadow:0 6px 0 #059669;" onclick="window.location.href='https://andydang2007.github.io/game/popforstudents.html?ticket=' + Date.now() + '&returnUrl=index.html'">领取奖励 🎁</button>`;
         }
 
         if (currentWrongItems.length > 0) { html += `<div style="margin-top:30px; background:#fffbeb; padding:25px 15px; border-radius:25px; border:3px dashed #fcd34d;"><h3 style="font-size:22px;">请选择你要再练一练的字 🐣</h3><div class="checkbox-grid" id="wrong-list">`; currentWrongItems.forEach((q, idx) => { html += `<label class="checkbox-label"><input type="checkbox" value="${idx}" onchange="this.parentElement.classList.toggle('wrong-selected', this.checked)"> ${q.Answer}</label>`; }); html += `</div><button class="btn-action btn-nav" style="width:220px; margin:0 auto; background:#f59e0b;" onclick="startRetry()">我爱学习 🚀</button></div>`; }
