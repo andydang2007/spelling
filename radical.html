@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+<title>Parts Strike Literacy Express</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+/* ⭐ 样式原样保留（未删任何游戏视觉部分） */
+*{box-sizing:border-box;user-select:none}
+body{margin:0;overflow:hidden;background:#050510;color:#fff;font-family:sans-serif}
+#game{width:100vw;height:100vh;position:relative}
+.overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#050510}
+.btn{padding:14px 40px;font-size:20px;border-radius:999px;background:#00f3ff;color:#000;font-weight:bold;border:none;cursor:pointer}
+</style>
+</head>
+
+<body>
+<div id="game">
+
+<div id="start" class="overlay">
+  <h1>Parts Strike Literacy Express</h1>
+
+  <!-- ✅ 已删除返回主页按钮 -->
+  <button class="btn" id="startBtn">🚀 开始游戏</button>
+</div>
+
+<div id="hud" style="position:absolute;top:10px;left:10px;">
+  ⭐ 得分: <span id="score">0</span>
+</div>
+
+<div id="timerBox" style="position:absolute;top:10px;right:10px;">
+  ⏳ 时间: <span id="timer">120</span>
+</div>
+
+<div id="arena" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)">
+  <h1 id="word"></h1>
+</div>
+
+<div id="piano" style="position:absolute;bottom:0;width:100%;display:flex;">
+</div>
+
+</div>
+
+<script>
+
+/* ✅ ✅ ✅ 已移除账号 & 强制跳转 */
+let currentUser = "guest";
+
+/* 参数 */
+const GAME_TIME = 120;
+const KEY_COUNT = 8;
+
+/* 数据 */
+let score=0;
+let timeLeft=GAME_TIME;
+let currentWord="";
+let currentParts=[];
+
+const sampleDict=[
+  {word:"明",parts:["日","月"]},
+  {word:"好",parts:["女","子"]},
+  {word:"休",parts:["亻","木"]}
+];
+
+/* UI */
+const startBtn=document.getElementById("startBtn");
+const scoreEl=document.getElementById("score");
+const timerEl=document.getElementById("timer");
+const wordEl=document.getElementById("word");
+const piano=document.getElementById("piano");
+
+let timer=null;
+
+/* 初始化琴键 */
+for(let i=0;i<KEY_COUNT;i++){
+  let k=document.createElement("button");
+  k.textContent="?";
+  k.style.flex=1;
+  k.style.height="80px";
+  k.onclick=()=>pressKey(i);
+  piano.appendChild(k);
+}
+
+/* 开始 */
+startBtn.onclick=startGame;
+
+function startGame(){
+  document.getElementById("start").style.display="none";
+  score=0;
+  timeLeft=GAME_TIME;
+  scoreEl.textContent=score;
+  timerEl.textContent=timeLeft;
+  nextWord();
+
+  timer=setInterval(()=>{
+    timeLeft--;
+    timerEl.textContent=timeLeft;
+    if(timeLeft<=0) endGame();
+  },1000);
+}
+
+/* 随机出词 */
+function nextWord(){
+  let d=sampleDict[Math.floor(Math.random()*sampleDict.length)];
+  currentWord=d.word;
+  currentParts=[...d.parts];
+  wordEl.textContent=currentWord;
+
+  updateKeys();
+}
+
+/* 更新键 */
+function updateKeys(){
+  let chars=["日","月","木","女","子","亻"];
+  shuffle(chars);
+
+  let correct=currentParts[0];
+
+  let arr=[correct,...chars.slice(0,KEY_COUNT-1)];
+  shuffle(arr);
+
+  for(let i=0;i<KEY_COUNT;i++){
+    piano.children[i].textContent=arr[i];
+  }
+}
+
+/* 按键 */
+function pressKey(i){
+  let val=piano.children[i].textContent;
+
+  if(val===currentParts[0]){
+    currentParts.shift();
+    score+=100;
+    scoreEl.textContent=score;
+
+    if(currentParts.length===0){
+      nextWord();
+    }else{
+      updateKeys();
+    }
+
+  }else{
+    score-=50;
+    scoreEl.textContent=Math.max(0,score);
+  }
+}
+
+/* 结束 */
+function endGame(){
+  clearInterval(timer);
+
+  alert("游戏结束！得分："+score);
+
+  document.getElementById("start").style.display="flex";
+}
+
+/* 工具 */
+function shuffle(a){
+  for(let i=a.length-1;i>0;i--){
+    let j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+}
+
+</script>
+</body>
+</html>
